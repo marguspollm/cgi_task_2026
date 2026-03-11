@@ -4,7 +4,8 @@ import ee.margus.resto_reserv_app.model.Table;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
+
+import static ee.margus.resto_reserv_app.model.TableAttribute.WINDOW;
 
 @Repository
 public class TableRepository {
@@ -17,8 +18,8 @@ public class TableRepository {
     private List<Table> loadTables() {
         return List.of(
             new Table(1L, 2, null, 10, 10),
-            new Table(2L, 2, null, 20, 20),
-            new Table(3L, 2, null, 30, 30)
+            new Table(2L, 4, null, 20, 20),
+            new Table(3L, 4, WINDOW, 30, 30)
         );
     }
 
@@ -26,9 +27,9 @@ public class TableRepository {
         return tables;
     }
 
-    public Optional<Table> findById(Long id) {
+    public Table findById(Long id) {
         return tables.stream()
             .filter(t -> t.getId().equals(id))
-            .findFirst();
+            .findFirst().orElseThrow(() -> new RuntimeException("Table not found!"));
     }
 }
