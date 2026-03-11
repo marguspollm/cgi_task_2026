@@ -9,9 +9,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record ReservationRequest(
-    @NotBlank
+    @NotBlank(message = "Customer name is required!")
     String customerName,
-    @NotBlank
+    @NotBlank(message = "Phone number is required!")
     @Pattern(
         regexp = "^\\+?[0-9\\- ]{7,20}$",
         message = "Invalid phone number format"
@@ -19,11 +19,11 @@ public record ReservationRequest(
     String phoneNumber,
     @NotNull
     Long tableId,
-    @NotNull
+    @NotNull(message = "Date is required!")
     LocalDate date,
-    @NotNull
+    @NotNull(message = "Time is required!")
     LocalTime time,
     @Min(1)
-    int partySize
+    Integer partySize
 ) {
 }
