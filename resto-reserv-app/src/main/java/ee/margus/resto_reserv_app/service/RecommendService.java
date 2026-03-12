@@ -22,7 +22,7 @@ public class RecommendService {
     @Autowired
     private TableRepository tableRepository;
 
-    public Optional<Table> getRecommendedTable(RecommendationRequest request) {
+    public Optional<Long> getRecommendedTable(RecommendationRequest request) {
         List<Table> notAvailableTables = reservationRepository.findAll().stream()
             .filter(reservation -> reservation.getDate().equals(request.date()))
             .filter(reservation ->
@@ -45,6 +45,6 @@ public class RecommendService {
 
         availableTableScore.sort(Comparator.comparingInt(RecommendedTableScore::getScore).reversed());
 
-        return Optional.of(availableTableScore.getFirst().getTable());
+        return Optional.of(availableTableScore.getFirst().getTable().getId());
     }
 }

@@ -1,7 +1,6 @@
 package ee.margus.resto_reserv_app.controller;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
-import ee.margus.resto_reserv_app.model.Table;
 import ee.margus.resto_reserv_app.service.RecommendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +13,7 @@ public class RecommendController {
     private RecommendService recommendService;
 
     @PostMapping("recommended-table")
-    public Table getRecommendedTable(@RequestBody RecommendationRequest request) {
+    public Long getRecommendedTable(@RequestBody RecommendationRequest request) {
         return recommendService.getRecommendedTable(request).orElseThrow();
     }
 
