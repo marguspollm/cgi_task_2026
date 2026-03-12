@@ -5,10 +5,7 @@ import ee.margus.resto_reserv_app.dto.ReservationResponse;
 import ee.margus.resto_reserv_app.service.ReservationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +22,11 @@ public class ReservationController {
     @GetMapping("reservations")
     public List<ReservationResponse> getAllReservations(){
         return service.getAllReservations();
+    }
+
+    @GetMapping("end-reservation")
+    public void endReservation(@RequestParam Long reservationId){
+        service.endReservation(reservationId);
     }
 
 }

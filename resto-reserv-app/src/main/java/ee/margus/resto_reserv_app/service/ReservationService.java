@@ -22,23 +22,6 @@ public class ReservationService {
     @Autowired
     private TableRepository tableRepository;
 
-    private static @NonNull Customer getCustomer(ReservationRequest reservationRequest) {
-        String cleanNumber = reservationRequest.phoneNumber().replaceAll("[\\s\\-()]", "");
-        return new Customer(reservationRequest.customerName(), cleanNumber);
-    }
-
-    private static @NonNull ReservationResponse createReservationResponse(Reservation savedReservation) {
-        return new ReservationResponse(
-            savedReservation.getId(),
-            savedReservation.getCustomer().getName(),
-            savedReservation.getCustomer().getPhoneNumber(),
-            savedReservation.getTable().getId(),
-            savedReservation.getDate(),
-            savedReservation.getTime(),
-            savedReservation.getPartySize()
-        );
-    }
-
     public ReservationResponse create(ReservationRequest reservationRequest) {
         validateRequest(reservationRequest);
 
@@ -54,14 +37,35 @@ public class ReservationService {
         return createReservationResponse(savedReservation);
     }
 
+    public List<ReservationResponse> getAllReservations() {
+        return reservationRepository.findAll()
+            .stream()
+            .map(res -> new ReservationResponse(
+                res.getId(),
+                res.getCustomer().getName(),
+                res.getCustomer().getPhoneNumber(),
+                res.getTable().getId(),
+                res.getDate(),
+                res.getTime(),
+                res.getPartySize()
+            )).toList();
+    }
+
+    public void endReservation(Long reservationId) {
+        reservationRepository.delete(reservationId);
+    }
+
     private void checkAvailability(LocalDate date,
                                    LocalTime time,
                                    Long tableId) {
         List<Reservation> conflict = reservationRepository.findAll()
             .stream()
-            .filter(res -> res.getTime().equals(time)
-                && res.getDate().equals(date)
-                && res.getTable().getId().equals(tableId))
+            .filter(reservation -> reservation.getDate().equals(date))
+            .filter(reservation ->
+                reservation.getTime().isBefore(time.plusHours(2))
+                    && reservation.getTime().plusHours(2).isAfter(time)
+            )
+            .filter(reservation -> reservation.getTable().getId().equals(tableId))
             .toList();
 
         if(!conflict.isEmpty()) throw new RuntimeException("Table is already booked for this time");
@@ -70,6 +74,8 @@ public class ReservationService {
     private void validateRequest(ReservationRequest request) {
         if (request.date().isBefore(LocalDate.now())) {
             throw new RuntimeException("Reservation date cannot be in the past!");
+        } else if(request.date().isEqual(LocalDate.now()) && request.time().isBefore(LocalTime.now())){
+            throw new RuntimeException("Reservation time cannot be in the past!");
         }
     }
 
@@ -85,17 +91,20 @@ public class ReservationService {
         return reservation;
     }
 
-    public List<ReservationResponse> getAllReservations() {
-        return reservationRepository.findAll()
-            .stream()
-            .map(res -> new ReservationResponse(
-                res.getId(),
-                res.getCustomer().getName(),
-                res.getCustomer().getPhoneNumber(),
-                res.getTable().getId(),
-                res.getDate(),
-                res.getTime(),
-                res.getPartySize()
-            )).toList();
+    private static @NonNull Customer getCustomer(ReservationRequest reservationRequest) {
+        String cleanNumber = reservationRequest.phoneNumber().replaceAll("[\\s\\-()]", "");
+        return new Customer(reservationRequest.customerName(), cleanNumber);
+    }
+
+    private static @NonNull ReservationResponse createReservationResponse(Reservation savedReservation) {
+        return new ReservationResponse(
+            savedReservation.getId(),
+            savedReservation.getCustomer().getName(),
+            savedReservation.getCustomer().getPhoneNumber(),
+            savedReservation.getTable().getId(),
+            savedReservation.getDate(),
+            savedReservation.getTime(),
+            savedReservation.getPartySize()
+        );
     }
 }
