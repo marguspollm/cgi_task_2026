@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import type { Table } from "./models/Table";
 import { getTables } from "./services/table.service";
 import Floor from "./components/Floor";
@@ -9,6 +8,9 @@ import { getReservedTables } from "./services/reservation.service";
 function App() {
   const [tables, setTables] = useState<Table[]>([]);
   const [bookedTables, setBookedTables] = useState<number[]>([]);
+
+  const [selectedTable, setSelectedTable] = useState<number | null>(null);
+
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -35,9 +37,19 @@ function App() {
     fetchBookings();
   }, []);
 
+  const handleTableClick = (id: number) => {
+    if (bookedTables.includes(id)) return;
+    setSelectedTable(id);
+  };
+
   return (
     <>
-      <Floor tables={tables} booked={bookedTables} />
+      <Floor
+        tables={tables}
+        booked={bookedTables}
+        setSelectedTable={handleTableClick}
+        selectedTable={selectedTable}
+      />
     </>
   );
 }
