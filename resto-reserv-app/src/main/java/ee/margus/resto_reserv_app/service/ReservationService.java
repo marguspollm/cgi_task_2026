@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class ReservationService {
@@ -37,18 +38,10 @@ public class ReservationService {
         return createReservationResponse(savedReservation);
     }
 
-    public List<ReservationResponse> getAllReservations() {
-        return reservationRepository.findAll()
-            .stream()
-            .map(res -> new ReservationResponse(
-                res.getId(),
-                res.getCustomer().getName(),
-                res.getCustomer().getPhoneNumber(),
-                res.getTable().getId(),
-                res.getDate(),
-                res.getTime(),
-                res.getPartySize()
-            )).toList();
+    public List<Long> getReservedTables(LocalDate date, LocalTime time) {
+        return getCurrentReservations(date, time)
+            .map(res -> res.getTable().getId())
+            .toList();
     }
 
     public void endReservation(Long reservationId) {
@@ -58,17 +51,21 @@ public class ReservationService {
     private void checkAvailability(LocalDate date,
                                    LocalTime time,
                                    Long tableId) {
-        List<Reservation> conflict = reservationRepository.findAll()
+        List<Reservation> conflict = getCurrentReservations(date, time)
+            .filter(reservation -> reservation.getTable().getId().equals(tableId))
+            .toList();
+
+        if(!conflict.isEmpty()) throw new RuntimeException("Table is already booked for this time");
+    }
+
+    private @NonNull Stream<Reservation> getCurrentReservations(LocalDate date, LocalTime time) {
+        return reservationRepository.findAll()
             .stream()
             .filter(reservation -> reservation.getDate().equals(date))
             .filter(reservation ->
                 reservation.getTime().isBefore(time.plusHours(2))
                     && reservation.getTime().plusHours(2).isAfter(time)
-            )
-            .filter(reservation -> reservation.getTable().getId().equals(tableId))
-            .toList();
-
-        if(!conflict.isEmpty()) throw new RuntimeException("Table is already booked for this time");
+            );
     }
 
     private void validateRequest(ReservationRequest request) {

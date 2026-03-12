@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -20,8 +22,12 @@ public class ReservationController {
     }
 
     @GetMapping("reservations")
-    public List<ReservationResponse> getAllReservations(){
-        return service.getAllReservations();
+    public List<Long> getReservedTables(@RequestParam(required = false) LocalDate date,
+                                        @RequestParam(required = false) LocalTime time){
+        if(date == null) date = LocalDate.now();
+        if(time == null) time = LocalTime.now();
+
+        return service.getReservedTables(date, time);
     }
 
     @GetMapping("end-reservation")
