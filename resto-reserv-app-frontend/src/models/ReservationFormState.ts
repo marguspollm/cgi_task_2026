@@ -1,6 +1,6 @@
 import type { UserPreferences } from "./UserPreferences";
 
-export type ReservationForm = {
+export type ReservationFormState = {
   customerName: string;
   phoneNumber: string;
   partySize: number;

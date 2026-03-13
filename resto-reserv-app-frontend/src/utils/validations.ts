@@ -1,7 +1,9 @@
 import type { FormErrors } from "../models/FormErrors";
-import type { ReservationForm } from "../models/ReservationForm";
+import type { ReservationFormState } from "../models/ReservationFormState";
 
-export const validateAvailability = (form: ReservationForm): FormErrors => {
+export const validateAvailability = (
+  form: ReservationFormState,
+): FormErrors => {
   const errors: FormErrors = {};
 
   if (!form.partySize || form.partySize < 1)
@@ -13,7 +15,7 @@ export const validateAvailability = (form: ReservationForm): FormErrors => {
 };
 
 export const validateReservation = (
-  form: ReservationForm,
+  form: ReservationFormState,
   selectedTable: number | null,
 ): FormErrors => {
   const errors: FormErrors = {};

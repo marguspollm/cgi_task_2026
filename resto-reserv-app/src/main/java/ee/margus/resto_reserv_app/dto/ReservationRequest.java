@@ -14,7 +14,7 @@ public record ReservationRequest(
     @NotBlank(message = "Phone number is required!")
     @Pattern(
         regexp = "^\\+?[0-9\\- ]{7,20}$",
-        message = "Invalid phone number format"
+        message = "Invalid phone number"
     )
     String phoneNumber,
     @NotNull

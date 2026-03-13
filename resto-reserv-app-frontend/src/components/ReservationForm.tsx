@@ -1,18 +1,20 @@
 import {
   Button,
   Checkbox,
+  Divider,
   FormControlLabel,
   Grid,
+  MenuItem,
   Paper,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import type { FormErrors } from "../models/FormErrors";
-import type { ReservationForm } from "../models/ReservationForm";
+import type { ReservationFormState } from "../models/ReservationFormState";
 
 type ReservationFormProps = {
-  form: ReservationForm;
+  form: ReservationFormState;
   selectedTable: number | null;
   errors: FormErrors;
   loading: boolean;
@@ -32,12 +34,19 @@ function ReservationForm({
   formChange,
   formPreferenceChange,
 }: ReservationFormProps) {
+  const generateTimeSlots = () => {
+    return Array.from(
+      { length: 24 },
+      (_, i) => `${String(i).padStart(2, "0")}:00`,
+    );
+  };
+
   return (
     <Paper sx={{ p: 3 }}>
       <form onSubmit={checkAvailability} noValidate>
         <Stack spacing={3}>
           <Grid container spacing={2}>
-            <Grid>
+            <Grid size={{ xs: 12, md: 5 }}>
               <TextField
                 label="Party size:"
                 type="number"
@@ -50,7 +59,7 @@ function ReservationForm({
               />
             </Grid>
 
-            <Grid>
+            <Grid size={{ xs: 12, md: 5 }}>
               <TextField
                 label="Date:"
                 type="date"
@@ -66,27 +75,31 @@ function ReservationForm({
               />
             </Grid>
 
-            <Grid>
+            <Grid size={{ xs: 12, md: 5 }}>
               <TextField
-                label="Time:"
-                type="time"
+                label="Time"
+                select
                 value={form.time}
                 fullWidth
                 required
-                slotProps={{
-                  inputLabel: { shrink: true },
-                }}
                 onChange={e => formChange("time", e.target.value)}
                 error={!!errors.time}
                 helperText={errors.time}
-              />
+              >
+                {generateTimeSlots().map(slot => (
+                  <MenuItem key={slot} value={slot}>
+                    {slot}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
           </Grid>
 
-          <Typography>Preferences:</Typography>
+          <Divider />
+          <Typography>Table preferences:</Typography>
 
-          <Grid container>
-            <Grid>
+          <Grid container spacing={1}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <FormControlLabel
                 label="Near window"
                 control={
@@ -99,7 +112,7 @@ function ReservationForm({
                 }
               />
             </Grid>
-            <Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
               <FormControlLabel
                 label="Private"
                 control={
@@ -112,7 +125,7 @@ function ReservationForm({
                 }
               />
             </Grid>
-            <Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
               <FormControlLabel
                 label="Near kids area"
                 control={
@@ -125,7 +138,7 @@ function ReservationForm({
                 }
               />
             </Grid>
-            <Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
               <FormControlLabel
                 label="Easily accessible"
                 control={
@@ -140,15 +153,17 @@ function ReservationForm({
             </Grid>
           </Grid>
 
-          <Button type="submit" variant="contained">
+          <Button type="submit" variant="contained" disabled={loading}>
             Check availability
           </Button>
 
           {selectedTable && (
             <>
+              <Divider />
               <Typography>Customer information:</Typography>
-              <Grid container>
-                <Grid>
+
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
                     label="Customer name"
                     value={form.customerName}
@@ -159,7 +174,7 @@ function ReservationForm({
                     helperText={errors.customerName}
                   />
                 </Grid>
-                <Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
                     label="Phone number"
                     value={form.phoneNumber}
@@ -175,6 +190,8 @@ function ReservationForm({
                 onClick={confirmReservation}
                 variant="contained"
                 color="success"
+                loading={loading}
+                disabled={!form.customerName && !form.phoneNumber}
               >
                 Confirm reservation
               </Button>
