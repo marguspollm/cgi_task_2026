@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -12,7 +14,7 @@ import lombok.Setter;
 public class Table {
     private Long id;
     private int capacity;
-    private TableAttribute attribute;
+    private Set<TableAttribute> attribute;
 
     private Integer locationX;
     private Integer locationY;

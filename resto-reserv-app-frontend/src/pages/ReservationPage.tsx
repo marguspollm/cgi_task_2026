@@ -95,6 +95,7 @@ function ReservationPage() {
     setLoading(true);
     setError(null);
     setFormErrors({});
+    setSelectedTable(null);
 
     const errors = validateAvailability(reservationForm);
 

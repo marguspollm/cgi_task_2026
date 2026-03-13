@@ -17,12 +17,13 @@ function Floor({
   setSelectedTable,
   recommendedTable,
 }: FloorProps) {
-  const getTableAttribute = (attr: TableAttribute) => {
-    if (attr === "WINDOW") return "Windw table";
-    else if (attr === "EASY_ACCESSIBLE") return "Easily accessible";
-    else if (attr === "PRIVATE") return "Private table";
-    else if (attr === "NEAR_KIDS_AREA") return "Near kids area";
-    else return "";
+  const getTableAttribute = (attr: TableAttribute[]) => {
+    const str: string[] = [];
+    if (attr.includes("WINDOW")) str.push("Window table");
+    if (attr.includes("EASY_ACCESSIBLE")) str.push("Easily accessible");
+    if (attr.includes("PRIVATE")) str.push("Private table");
+    if (attr.includes("NEAR_KIDS_AREA")) str.push("Near kids area");
+    return str.join(", ");
   };
 
   return (

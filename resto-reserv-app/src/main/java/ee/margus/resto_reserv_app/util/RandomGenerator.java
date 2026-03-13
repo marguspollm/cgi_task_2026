@@ -7,9 +7,7 @@ import ee.margus.resto_reserv_app.model.TableAttribute;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 // Creates random reservations and tables for demo
 public class RandomGenerator {
@@ -54,17 +52,24 @@ public class RandomGenerator {
 
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 5; col++) {
-                int taValesLength = taValues.length;
-                int i = random.nextInt(taValesLength + 1);
+
+                int attrCount = random.nextInt(3);
+                Set<TableAttribute> attrs = new HashSet<>();
+                for (int j = 0; j < attrCount; j++) {
+                    int taValesLength = taValues.length;
+                    int i = random.nextInt(taValesLength);
+                    if (i < taValesLength) attrs.add(taValues[i]);
+                }
+
 
                 Table table = new Table(
                     id++,
                     random.nextInt(1, 10),
-                    i < taValesLength ? taValues[i] : null,
+                    attrs,
                     100 + col * spacingX,
                     100 + row * spacingY
                 );
-
+System.out.println(table);
                 tables.add(table);
             }
         }
