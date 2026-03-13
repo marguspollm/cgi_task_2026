@@ -27,6 +27,7 @@ function Floor({
             key={table.id}
             onClick={() => setSelectedTable(table.id)}
             className="table"
+            title={`Table ${table.id} - Seats: ${table.capacity} `}
             style={{
               top: table.locationY,
               left: table.locationX,

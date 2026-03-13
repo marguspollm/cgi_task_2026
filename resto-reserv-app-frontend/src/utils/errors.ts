@@ -1,13 +1,18 @@
+import { ApiError } from "../models/ApiError";
+
 export const handleError = (
   error: unknown,
   setError: (message: string) => void,
 ) => {
-  setError(getErrorMessage(error));
-};
-
-const getErrorMessage = (error: unknown) => {
-  if (error instanceof Error) {
-    return error.message.replaceAll(" ", "").toLowerCase();
+  if (error instanceof ApiError) {
+    setError(error.payload?.message || "Something went wrong");
+    return;
   }
-  return "Something went wrong =(";
+
+  if (error instanceof Error) {
+    setError(error.message);
+    return;
+  }
+
+  setError("Something went wrong =(");
 };

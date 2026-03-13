@@ -16,4 +16,15 @@ public class Table {
 
     private Integer locationX;
     private Integer locationY;
+
+    @Override
+    public String toString() {
+        return "Table{" +
+            "id=" + id +
+            ", capacity=" + capacity +
+            ", attribute=" + attribute +
+            ", locationX=" + locationX +
+            ", locationY=" + locationY +
+            '}';
+    }
 }

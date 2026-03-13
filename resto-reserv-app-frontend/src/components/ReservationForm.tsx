@@ -21,6 +21,7 @@ function ReservationForm({
           type="text"
           value={form.customerName}
           onChange={e => formChange("customerName", e.target.value)}
+          required
         />
       </label>
       <label>
@@ -29,6 +30,7 @@ function ReservationForm({
           type="text"
           value={form.phoneNumber}
           onChange={e => formChange("phoneNumber", e.target.value)}
+          required
         />
       </label>
 
@@ -38,6 +40,7 @@ function ReservationForm({
           type="number"
           value={form.partySize}
           onChange={e => formChange("partySize", e.target.value)}
+          required
         />
       </label>
       <label>
@@ -46,6 +49,7 @@ function ReservationForm({
           type="date"
           value={form.date}
           onChange={e => formChange("date", e.target.value)}
+          required
         />
       </label>
       <label>
@@ -55,6 +59,7 @@ function ReservationForm({
           step={300}
           value={form.time}
           onChange={e => formChange("time", e.target.value)}
+          required
         />
       </label>
 

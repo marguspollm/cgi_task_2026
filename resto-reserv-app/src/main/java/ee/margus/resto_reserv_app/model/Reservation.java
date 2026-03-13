@@ -22,4 +22,16 @@ public class Reservation {
     private int partySize;
 
     private Customer customer;
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+            "id=" + id +
+            ", date=" + date +
+            ", time=" + time +
+            ", table=" + table +
+            ", partySize=" + partySize +
+            ", customer=" + customer +
+            '}';
+    }
 }

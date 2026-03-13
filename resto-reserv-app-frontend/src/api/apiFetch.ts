@@ -1,3 +1,5 @@
+import { ApiError } from "../models/ApiError";
+
 const BACKEND_URL = "http://localhost:8080/";
 
 export async function apiFetch<T>(
@@ -19,5 +21,15 @@ export async function apiFetch<T>(
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  return res.json() as T;
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new ApiError({
+      message: data.message || "API Error",
+      status: res.status,
+      errors: data.errors || null,
+    });
+  }
+
+  return data as T;
 }

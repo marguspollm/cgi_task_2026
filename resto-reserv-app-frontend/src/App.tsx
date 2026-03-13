@@ -58,18 +58,24 @@ function App() {
     e: React.SubmitEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
-    console.log(reservationForm);
+
     const payload: RecommendRequest = {
       partySize: reservationForm.partySize,
       date: reservationForm.date,
       time: reservationForm.time,
       userPreferences: reservationForm.userPreferences,
     };
+
     try {
-      const data = await getRecommendedTable(payload);
-      setRecommendedTable(data);
+      const recData = await getRecommendedTable(payload);
+      const bookedData = await getReservedTables(
+        reservationForm.date,
+        reservationForm.time,
+      );
+      setRecommendedTable(recData);
+      setBookedTables(bookedData);
     } catch (error) {
-      console.log(error);
+      handleError(error, setError);
     }
   };
 

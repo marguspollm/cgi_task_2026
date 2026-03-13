@@ -3,6 +3,7 @@ package ee.margus.resto_reserv_app.util;
 import ee.margus.resto_reserv_app.model.Customer;
 import ee.margus.resto_reserv_app.model.Reservation;
 import ee.margus.resto_reserv_app.model.Table;
+import ee.margus.resto_reserv_app.model.TableAttribute;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,15 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-// Creates random reservation times for demo
-public class RandomReservationGenerator {
+// Creates random reservations and tables for demo
+public class RandomGenerator {
     private static final Random random = new Random();
 
     public static List<Reservation> generateReservations(List<Table> tables) {
 
         List<Reservation> reservations = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 31; i++) {
 
             Reservation r = new Reservation();
 
@@ -36,11 +37,38 @@ public class RandomReservationGenerator {
             Customer customer = new Customer("Test Tester", "55555555");
             r.setCustomer(customer);
 
-            r.setPartySize(random.nextInt(table.getCapacity()));
+            r.setPartySize(1 + random.nextInt(table.getCapacity()));
 
             reservations.add(r);
         }
 
         return reservations;
+    }
+
+    public static List<Table> generateTables() {
+        List<Table> tables = new ArrayList<>();
+        long id = 1;
+        int spacingX = 100;
+        int spacingY = 100;
+        TableAttribute[] taValues = TableAttribute.values();
+
+        for (int row = 0; row < 5; row++) {
+            for (int col = 0; col < 5; col++) {
+                int taValesLength = taValues.length;
+                int i = random.nextInt(taValesLength + 1);
+
+                Table table = new Table(
+                    id++,
+                    random.nextInt(1, 10),
+                    i < taValesLength ? taValues[i] : null,
+                    100 + col * spacingX,
+                    100 + row * spacingY
+                );
+
+                tables.add(table);
+            }
+        }
+
+        return tables;
     }
 }
