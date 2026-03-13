@@ -30,6 +30,6 @@ public class ReservationDataLoader implements CommandLineRunner {
 
         reservations.forEach(reservationRepository::save);
 
-        System.out.println("Loaded " + reservations.size() + " random reservations");
+        System.out.println("Generated " + reservations.size() + " random reservations");
     }
 }

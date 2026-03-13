@@ -5,7 +5,7 @@ type FloorProps = {
   booked: number[];
   selectedTable?: number | null;
   setSelectedTable: (id: number) => void;
-  recommendedTable?: number;
+  recommendedTable: number | null;
 };
 
 function Floor({
@@ -30,12 +30,12 @@ function Floor({
             style={{
               top: table.locationY,
               left: table.locationX,
-              backgroundColor: isRecommended
-                ? "gold"
+              backgroundColor: isSelected
+                ? "green"
                 : isBooked
                   ? "grey"
-                  : isSelected
-                    ? "green"
+                  : isRecommended
+                    ? "gold"
                     : "lightgreen",
             }}
           >

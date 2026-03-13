@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ee.margus.resto_reserv_app.util.Validator.validateRequest;
+
 @Service
 public class RecommendService {
     @Autowired
@@ -23,6 +25,8 @@ public class RecommendService {
     private TableRepository tableRepository;
 
     public Optional<Long> getRecommendedTable(RecommendationRequest request) {
+        validateRequest(request);
+
         List<Table> notAvailableTables = reservationRepository.findAll().stream()
             .filter(reservation -> reservation.getDate().equals(request.date()))
             .filter(reservation ->
@@ -39,9 +43,8 @@ public class RecommendService {
             .map(table -> new RecommendedTableScore(table, 0))
             .collect(Collectors.toList());
 
-        availableTableScore.forEach(tableScore -> {
-            tableScore.setScore(TableScore.score(tableScore, request));
-        });
+        availableTableScore.forEach(tableScore -> tableScore
+            .setScore(TableScore.score(tableScore, request)));
 
         availableTableScore.sort(Comparator.comparingInt(RecommendedTableScore::getScore).reversed());
 

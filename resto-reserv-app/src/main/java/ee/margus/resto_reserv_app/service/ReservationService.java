@@ -16,6 +16,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static ee.margus.resto_reserv_app.util.Validator.validateRequest;
+
 @Service
 public class ReservationService {
     @Autowired
@@ -68,13 +70,7 @@ public class ReservationService {
             );
     }
 
-    private void validateRequest(ReservationRequest request) {
-        if (request.date().isBefore(LocalDate.now())) {
-            throw new RuntimeException("Reservation date cannot be in the past!");
-        } else if(request.date().isEqual(LocalDate.now()) && request.time().isBefore(LocalTime.now())){
-            throw new RuntimeException("Reservation time cannot be in the past!");
-        }
-    }
+
 
     private @NonNull Reservation createReservation(ReservationRequest reservationRequest) {
         Reservation reservation = new Reservation();

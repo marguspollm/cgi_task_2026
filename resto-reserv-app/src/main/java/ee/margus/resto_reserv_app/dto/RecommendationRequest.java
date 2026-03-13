@@ -7,10 +7,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record RecommendationRequest(
-    @Min(1) int partySize,
-    @NotNull
+    @Min(1) Integer partySize,
+    @NotNull(message = "Date is required!")
     LocalDate date,
-    @NotNull
+    @NotNull(message = "Time is required!")
     LocalTime time,
-    UserPreferences userPreferences) {
+    UserPreferences userPreferences) implements ReservationRequestDetails {
 }
