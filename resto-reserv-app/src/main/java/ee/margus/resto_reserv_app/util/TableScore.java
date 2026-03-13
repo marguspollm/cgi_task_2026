@@ -15,21 +15,25 @@ public class TableScore {
         Table table = ts.getTable();
         TableAttribute attr = table.getAttribute();
 
-        if (table.getCapacity() == request.partySize()) score += 3;
-        else if(table.getCapacity() == request.partySize() + 1 || table.getCapacity() == request.partySize() + 2) score += 1;
+        if (table.getCapacity() == request.partySize()) {
+            score += 10;
+        } else if (table.getCapacity() == request.partySize() + 1) {
+            score += 6;
+        } else if (table.getCapacity() == request.partySize() + 2) {
+            score += 3;
+        }
 
+        int extraSeats = table.getCapacity() - request.partySize();
+        if (extraSeats > 2) score -= extraSeats;
 
         if (attr == WINDOW && Boolean.TRUE.equals(userPreferences.isWindow()))
-            score++;
-
+            score += 2;
         if (attr == PRIVATE && Boolean.TRUE.equals(userPreferences.isPrivate()))
-            score++;
-
+            score += 2;
         if (attr == EASY_ACCESSIBLE && Boolean.TRUE.equals(userPreferences.isEasyAccess()))
-            score++;
-
+            score += 2;
         if (attr == NEAR_KIDS_AREA && Boolean.TRUE.equals(userPreferences.isNearKidsArea()))
-            score++;
+            score += 2;
 
         return score;
     }
