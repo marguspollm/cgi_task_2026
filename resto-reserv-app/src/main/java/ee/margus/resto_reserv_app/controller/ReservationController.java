@@ -30,9 +30,4 @@ public class ReservationController {
         return service.getReservedTables(date, time);
     }
 
-    @GetMapping("end-reservation")
-    public void endReservation(@RequestParam Long reservationId){
-        service.endReservation(reservationId);
-    }
-
 }

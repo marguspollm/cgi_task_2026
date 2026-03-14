@@ -18,6 +18,9 @@ import java.util.stream.Stream;
 
 import static ee.margus.resto_reserv_app.util.Validator.validateRequest;
 
+/*
+* One Reservation reserves the table for 2 hours
+*/
 @Service
 public class ReservationService {
     @Autowired
@@ -30,7 +33,7 @@ public class ReservationService {
 
         checkAvailability(reservationRequest.date(), reservationRequest.time(), reservationRequest.tableId());
 
-        Customer customer = getCustomer(reservationRequest);
+        Customer customer = createCustomer(reservationRequest);
         Reservation reservation = createReservation(reservationRequest);
 
         reservation.setCustomer(customer);
@@ -46,18 +49,14 @@ public class ReservationService {
             .toList();
     }
 
-    public void endReservation(Long reservationId) {
-        reservationRepository.delete(reservationId);
-    }
-
     private void checkAvailability(LocalDate date,
                                    LocalTime time,
                                    Long tableId) {
-        List<Reservation> conflict = getCurrentReservations(date, time)
+        List<Reservation> conflicts = getCurrentReservations(date, time)
             .filter(reservation -> reservation.getTable().getId().equals(tableId))
             .toList();
 
-        if(!conflict.isEmpty()) throw new RuntimeException("Table is already booked for this time");
+        if(!conflicts.isEmpty()) throw new RuntimeException("Table is already booked for this time");
     }
 
     private @NonNull Stream<Reservation> getCurrentReservations(LocalDate date, LocalTime time) {
@@ -69,8 +68,6 @@ public class ReservationService {
                     && reservation.getTime().plusHours(2).isAfter(time)
             );
     }
-
-
 
     private @NonNull Reservation createReservation(ReservationRequest reservationRequest) {
         Reservation reservation = new Reservation();
@@ -84,9 +81,8 @@ public class ReservationService {
         return reservation;
     }
 
-    private static @NonNull Customer getCustomer(ReservationRequest reservationRequest) {
-        String cleanNumber = reservationRequest.phoneNumber().replaceAll("[\\s\\-()]", "");
-        return new Customer(reservationRequest.customerName(), cleanNumber);
+    private static @NonNull Customer createCustomer(ReservationRequest reservationRequest) {
+        return new Customer(reservationRequest.customerName(), reservationRequest.phoneNumber());
     }
 
     private static @NonNull ReservationResponse createReservationResponse(Reservation savedReservation) {

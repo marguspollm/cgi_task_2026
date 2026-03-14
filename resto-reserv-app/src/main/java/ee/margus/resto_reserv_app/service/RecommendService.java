@@ -6,13 +6,12 @@ import ee.margus.resto_reserv_app.model.Reservation;
 import ee.margus.resto_reserv_app.model.Table;
 import ee.margus.resto_reserv_app.repository.ReservationRepository;
 import ee.margus.resto_reserv_app.repository.TableRepository;
-import ee.margus.resto_reserv_app.util.TableScore;
+import ee.margus.resto_reserv_app.util.TableScoreCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ee.margus.resto_reserv_app.util.Validator.validateRequest;
@@ -24,10 +23,11 @@ public class RecommendService {
     @Autowired
     private TableRepository tableRepository;
 
-    public Optional<Long> getRecommendedTable(RecommendationRequest request) {
+    public Long getRecommendedTable(RecommendationRequest request) {
         validateRequest(request);
 
-        List<Table> notAvailableTables = reservationRepository.findAll().stream()
+        List<Table> notAvailableTables = reservationRepository.findAll()
+            .stream()
             .filter(reservation -> reservation.getDate().equals(request.date()))
             .filter(reservation ->
                 reservation.getTime().isBefore(request.time().plusHours(2))
@@ -44,10 +44,14 @@ public class RecommendService {
             .collect(Collectors.toList());
 
         availableTableScore.forEach(tableScore -> tableScore
-            .setScore(TableScore.score(tableScore, request)));
+            .setScore(TableScoreCalculator.score(tableScore, request)));
 
         availableTableScore.sort(Comparator.comparingInt(RecommendedTableScore::getScore).reversed());
 
-        return Optional.of(availableTableScore.getFirst().getTable().getId());
+        return availableTableScore
+            .stream()
+            .findFirst()
+            .map(ts -> ts.getTable().getId())
+            .orElseThrow(() -> new RuntimeException("No available tables to recommend!"));
     }
 }

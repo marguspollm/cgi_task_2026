@@ -17,7 +17,8 @@ public class TableRepository {
     public Table findById(Long id) {
         return tables.stream()
             .filter(t -> t.getId().equals(id))
-            .findFirst().orElseThrow(() -> new RuntimeException("Table not found!"));
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Table not found!"));
     }
 
     public void save(Table table){
