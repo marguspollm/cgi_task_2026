@@ -10,7 +10,7 @@ import java.util.Set;
 
 import static ee.margus.resto_reserv_app.model.TableAttribute.*;
 
-public class TableScore {
+public class TableScoreCalculator {
     public static int score(RecommendedTableScore ts, RecommendationRequest request) {
         int score = 0;
         UserPreferences userPreferences = request.userPreferences();

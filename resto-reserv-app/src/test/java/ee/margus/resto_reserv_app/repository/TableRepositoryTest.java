@@ -14,6 +14,12 @@ class TableRepositoryTest {
     @BeforeEach
     void setUp() {
         tableRepository = new TableRepository();
+        for (int i = 0; i < 3; i++) {
+            Table table = new Table();
+            table.setId((long) i);
+            table.setCapacity(2);
+            tableRepository.save(table);
+        }
     }
 
     @Test

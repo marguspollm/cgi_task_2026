@@ -14,7 +14,7 @@ public class RecommendController {
 
     @PostMapping("recommended-table")
     public Long getRecommendedTable(@RequestBody RecommendationRequest request) {
-        return recommendService.getRecommendedTable(request).orElseThrow();
+        return recommendService.getRecommendedTable(request);
     }
 
 }
