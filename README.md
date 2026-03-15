@@ -1,4 +1,4 @@
-# SportSpace Reservation System
+# Restaurant Reservation System
 
 This project is a full-stack application for restaurant reservations, consisting of a Spring Boot backend and a React frontend.
 
