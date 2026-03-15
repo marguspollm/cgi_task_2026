@@ -1,0 +1,14 @@
+services:
+  backend:
+    container_name: backend
+    build: ./resto-reserv-app
+    ports:
+      - "8080:8080"
+
+  frontend:
+    container_name: frontend
+    build: ./resto-reserv-app-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
