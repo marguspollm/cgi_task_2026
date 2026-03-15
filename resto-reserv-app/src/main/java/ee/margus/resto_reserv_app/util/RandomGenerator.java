@@ -13,7 +13,7 @@ import java.util.*;
 public class RandomGenerator {
     private static final Random random = new Random();
 
-    public static List<Reservation> generateReservations(List<Table> tables) {
+    public static List<Reservation> reservations(List<Table> tables) {
 
         List<Reservation> reservations = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class RandomGenerator {
         return reservations;
     }
 
-    public static List<Table> generateTables() {
+    public static List<Table> tables() {
         List<Table> tables = new ArrayList<>();
         long id = 1;
         int spacingX = 100;
@@ -75,5 +75,9 @@ System.out.println(table);
         }
 
         return tables;
+    }
+
+    public static int price(){
+        return random.nextInt(100);
     }
 }

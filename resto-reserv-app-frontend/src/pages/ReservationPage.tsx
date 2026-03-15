@@ -1,15 +1,4 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Container, Grid } from "@mui/material";
 import Floor from "../components/Floor";
 import { useEffect, useState } from "react";
 import type { FormErrors } from "../models/FormErrors";
@@ -31,7 +20,7 @@ import type { ReservationFormState } from "../models/ReservationFormState";
 import ReservationForm from "../components/ReservationForm";
 import { ApiError } from "../models/ApiError";
 import type { ReservationResponse } from "../models/ReservationResponse";
-import { createDate, formatDate, formatTime } from "../utils/formatters";
+import ReservationConfirmationCard from "../components/ReservationConfirmationCard";
 
 function ReservationPage() {
   const defaultForm = {
@@ -196,49 +185,11 @@ function ReservationPage() {
     <Container>
       {error && <Alert severity="error">{error}</Alert>}
 
-      <Dialog open={successOpen} onClose={() => setSuccessOpen(false)}>
-        <DialogTitle>Reservation Confirmed</DialogTitle>
-        {confirmedReservation && (
-          <DialogContent dividers>
-            <Typography>
-              <strong>Name: </strong> {confirmedReservation.customerName}
-            </Typography>
-            <Typography>
-              <strong>Phone: </strong> {confirmedReservation.phoneNumber}
-            </Typography>
-            <Typography>
-              <strong>Table: </strong> {confirmedReservation.tableId}
-            </Typography>
-            <Typography>
-              <strong>Date: </strong>
-              {formatDate(
-                createDate(
-                  confirmedReservation.date,
-                  confirmedReservation.time,
-                ),
-              )}
-            </Typography>
-            <Typography>
-              <strong>Time: </strong>
-              {formatTime(
-                createDate(
-                  confirmedReservation.date,
-                  confirmedReservation.time,
-                ),
-              )}
-            </Typography>
-            <Typography>
-              <strong>Party Size: </strong> {confirmedReservation.partySize}
-            </Typography>
-          </DialogContent>
-        )}
-
-        <DialogActions>
-          <Button onClick={() => setSuccessOpen(false)} variant="contained">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ReservationConfirmationCard
+        open={successOpen}
+        handleOpen={setSuccessOpen}
+        confirmedReservation={confirmedReservation}
+      />
 
       <Grid container spacing={{ xs: 2, md: 4 }}>
         <Grid size={{ xs: 12, md: 7 }}>

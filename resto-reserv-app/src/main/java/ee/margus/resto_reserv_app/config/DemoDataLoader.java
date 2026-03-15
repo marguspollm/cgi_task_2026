@@ -23,12 +23,12 @@ public class DemoDataLoader implements CommandLineRunner {
     @Override
     public void run(String @NonNull ... args) {
 
-        List<Table> tables = RandomGenerator.generateTables();
+        List<Table> tables = RandomGenerator.tables();
 
         tables.forEach(tableRepository::save);
         System.out.println("Generated " + tables.size() + " random tables");
 
-        List<Reservation> reservations = RandomGenerator.generateReservations(tables);
+        List<Reservation> reservations = RandomGenerator.reservations(tables);
 
         reservations.forEach(reservationRepository::save);
         System.out.println("Generated " + reservations.size() + " random reservations");
