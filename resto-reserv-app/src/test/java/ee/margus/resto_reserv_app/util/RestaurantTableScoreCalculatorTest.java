@@ -2,8 +2,8 @@ package ee.margus.resto_reserv_app.util;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
 import ee.margus.resto_reserv_app.dto.UserPreferences;
-import ee.margus.resto_reserv_app.model.RecommendedTableScore;
 import ee.margus.resto_reserv_app.entity.RestaurantTable;
+import ee.margus.resto_reserv_app.model.RecommendedTableScore;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

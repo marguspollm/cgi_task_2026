@@ -41,7 +41,6 @@ public class RandomGenerator {
 
     public static List<RestaurantTable> tables() {
         List<RestaurantTable> restaurantTables = new ArrayList<>();
-        long id = 1;
         int spacingX = 100;
         int spacingY = 100;
         TableAttribute[] taValues = TableAttribute.values();

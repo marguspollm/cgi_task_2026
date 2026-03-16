@@ -25,7 +25,7 @@ class RestaurantTableControllerTest {
     private TableService tableService;
 
     @Test
-    void getAllTables_thenReturnList() throws Exception{
+    void getAllTables_thenReturnList() throws Exception {
         TableDto table = new TableDto(1L, 1, null, 10, 10);
         List<TableDto> tables = List.of(table);
 

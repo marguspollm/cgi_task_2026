@@ -51,19 +51,19 @@ class ReservationServiceTest {
         return new RestaurantTable(id, 2, null, 10, 10);
     }
 
-    private static @NonNull ReservationRequest getRequest(LocalDate date, LocalTime time) {
+    private static @NonNull ReservationRequest getRequest() {
         return new ReservationRequest(
             "Test Tester",
             "5555555",
             1L,
-            date,
-            time,
+            ReservationServiceTest.DATE,
+            ReservationServiceTest.TIME,
             2);
     }
 
     @Test
     void givenValidReservationRequest_whenCreateReservation_thenSaveReservationAndReturnResponse() {
-        ReservationRequest request = getRequest(DATE, TIME);
+        ReservationRequest request = getRequest();
 
         RestaurantTable restaurantTable = getTable(1L);
 
@@ -82,7 +82,7 @@ class ReservationServiceTest {
 
     @Test
     void givenOverlapingReservationRequest_whenCreateReservation_thenThrowException() {
-        ReservationRequest request = getRequest(DATE, TIME);
+        ReservationRequest request = getRequest();
 
         RestaurantTable restaurantTable = getTable(1L);
 

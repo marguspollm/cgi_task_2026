@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -75,15 +74,13 @@ class MealServiceTest {
     @Test
     void getRecommendedMeals_whenApiFails_throwsException() {
         when(restTemplate.exchange(
-                testUrl,
-                HttpMethod.GET,
-                null,
-                MealDbResponse.class))
+            testUrl,
+            HttpMethod.GET,
+            null,
+            MealDbResponse.class))
             .thenThrow(new RestClientException("API is down"));
 
-        assertThrows(RestClientException.class, () -> {
-            mealService.getRecommendedMeals();
-        });
+        assertThrows(RestClientException.class, () -> mealService.getRecommendedMeals());
     }
 
 }

@@ -29,7 +29,7 @@ public class MealService {
                 restTemplate.exchange(mealDbUrl, HttpMethod.GET, null, MealDbResponse.class)
                     .getBody();
 
-            if (response != null && response.getMeals() != null && !response.getMeals().isEmpty()){
+            if (response != null && response.getMeals() != null && !response.getMeals().isEmpty()) {
                 MealDbMealData meal = response.getMeals().getFirst();
                 MealDto mealDto =
                     new MealDto(

@@ -17,15 +17,15 @@ public class ReservationController {
     private ReservationService service;
 
     @PostMapping("create-reservation")
-    public ReservationResponse createReservation(@Valid @RequestBody ReservationRequest reservationRequest){
+    public ReservationResponse createReservation(@Valid @RequestBody ReservationRequest reservationRequest) {
         return service.create(reservationRequest);
     }
 
     @GetMapping("reservations")
     public List<Long> getReservedTables(@RequestParam(required = false) LocalDate date,
-                                        @RequestParam(required = false) LocalTime time){
-        if(date == null) date = LocalDate.now();
-        if(time == null) time = LocalTime.now();
+                                        @RequestParam(required = false) LocalTime time) {
+        if (date == null) date = LocalDate.now();
+        if (time == null) time = LocalTime.now();
 
         return service.getReservedTables(date, time);
     }

@@ -14,7 +14,7 @@ import java.util.Map;
 public class ControllerAdviceHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorMessage> handleBadCredentialsException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorMessage> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(error ->

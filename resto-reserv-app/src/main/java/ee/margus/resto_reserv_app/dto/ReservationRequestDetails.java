@@ -5,6 +5,8 @@ import java.time.LocalTime;
 
 public interface ReservationRequestDetails {
     Integer partySize();
+
     LocalDate date();
+
     LocalTime time();
 }

@@ -25,5 +25,5 @@ public record ReservationRequest(
     LocalTime time,
     @Min(1)
     Integer partySize
-) implements ReservationRequestDetails{
+) implements ReservationRequestDetails {
 }

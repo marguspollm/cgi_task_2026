@@ -9,7 +9,8 @@ import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ValidatorTest { ;
+class ValidatorTest {
+
     @Test
     void givenValidReservationRequest_whenValidateRequest_thenDoNothing() {
         ReservationRequest request = new ReservationRequest(

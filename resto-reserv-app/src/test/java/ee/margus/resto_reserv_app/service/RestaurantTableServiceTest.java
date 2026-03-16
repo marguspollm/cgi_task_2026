@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,7 +22,7 @@ class RestaurantTableServiceTest {
     private TableService tableService;
 
     @Test
-    void whenGetAllTables_thenReturnListOfAllTables(){
+    void whenGetAllTables_thenReturnListOfAllTables() {
         List<RestaurantTable> restaurantTables = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             RestaurantTable restaurantTable = new RestaurantTable();

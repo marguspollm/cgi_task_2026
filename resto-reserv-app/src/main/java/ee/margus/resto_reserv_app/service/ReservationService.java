@@ -10,6 +10,7 @@ import ee.margus.resto_reserv_app.repository.TableRepository;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -19,8 +20,8 @@ import java.util.stream.Stream;
 import static ee.margus.resto_reserv_app.util.Validator.validateRequest;
 
 /*
-* One Reservation reserves the table for 2 hours
-*/
+ * One Reservation reserves the table for 2 hours
+ */
 @Service
 public class ReservationService {
     @Autowired
@@ -28,6 +29,7 @@ public class ReservationService {
     @Autowired
     private TableRepository tableRepository;
 
+    @Transactional
     public ReservationResponse create(ReservationRequest reservationRequest) {
         validateRequest(reservationRequest);
 
@@ -56,7 +58,7 @@ public class ReservationService {
             .filter(reservation -> reservation.getRestaurantTable().getId().equals(tableId))
             .toList();
 
-        if(!conflicts.isEmpty()) throw new RuntimeException("Table is already booked for this time");
+        if (!conflicts.isEmpty()) throw new RuntimeException("Table is already booked for this time");
     }
 
     private @NonNull Stream<Reservation> getCurrentReservations(LocalDate date, LocalTime time) {

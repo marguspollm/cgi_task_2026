@@ -1,7 +1,6 @@
 package ee.margus.resto_reserv_app.controller;
 
 import ee.margus.resto_reserv_app.dto.MealDto;
-import ee.margus.resto_reserv_app.model.MealDbResponse;
 import ee.margus.resto_reserv_app.service.MealService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

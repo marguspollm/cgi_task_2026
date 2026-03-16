@@ -12,7 +12,7 @@ public class TableService {
     @Autowired
     private TableRepository tableRepository;
 
-    public List<TableDto> getAllTables(){
+    public List<TableDto> getAllTables() {
         return tableRepository.findAll()
             .stream()
             .map(table ->
