@@ -1,6 +1,6 @@
 package ee.margus.resto_reserv_app.controller;
 
-import ee.margus.resto_reserv_app.model.Table;
+import ee.margus.resto_reserv_app.dto.TableDto;
 import ee.margus.resto_reserv_app.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +14,7 @@ public class TableController {
     private TableService tableService;
 
     @GetMapping("tables")
-    public List<Table> getAllTables() {
+    public List<TableDto> getAllTables() {
         return tableService.getAllTables();
     }
 

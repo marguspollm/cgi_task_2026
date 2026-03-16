@@ -1,5 +1,6 @@
 package ee.margus.resto_reserv_app.model;
 
+import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecommendedTableScore {
-    private Table table;
+    private RestaurantTable restaurantTable;
     private int score;
 }

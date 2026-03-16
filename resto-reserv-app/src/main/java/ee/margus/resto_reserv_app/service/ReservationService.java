@@ -2,9 +2,9 @@ package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.ReservationRequest;
 import ee.margus.resto_reserv_app.dto.ReservationResponse;
-import ee.margus.resto_reserv_app.model.Customer;
-import ee.margus.resto_reserv_app.model.Reservation;
-import ee.margus.resto_reserv_app.model.Table;
+import ee.margus.resto_reserv_app.entity.Customer;
+import ee.margus.resto_reserv_app.entity.Reservation;
+import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.repository.ReservationRepository;
 import ee.margus.resto_reserv_app.repository.TableRepository;
 import org.jspecify.annotations.NonNull;
@@ -45,7 +45,7 @@ public class ReservationService {
 
     public List<Long> getReservedTables(LocalDate date, LocalTime time) {
         return getCurrentReservations(date, time)
-            .map(res -> res.getTable().getId())
+            .map(res -> res.getRestaurantTable().getId())
             .toList();
     }
 
@@ -53,7 +53,7 @@ public class ReservationService {
                                    LocalTime time,
                                    Long tableId) {
         List<Reservation> conflicts = getCurrentReservations(date, time)
-            .filter(reservation -> reservation.getTable().getId().equals(tableId))
+            .filter(reservation -> reservation.getRestaurantTable().getId().equals(tableId))
             .toList();
 
         if(!conflicts.isEmpty()) throw new RuntimeException("Table is already booked for this time");
@@ -76,8 +76,9 @@ public class ReservationService {
         reservation.setTime(reservationRequest.time());
         reservation.setPartySize(reservationRequest.partySize());
 
-        Table dbTable = tableRepository.findById(reservationRequest.tableId());
-        reservation.setTable(dbTable);
+        RestaurantTable dbRestaurantTable = tableRepository.findById(reservationRequest.tableId())
+            .orElseThrow(() -> new RuntimeException("Table doesn't exist!"));
+        reservation.setRestaurantTable(dbRestaurantTable);
         return reservation;
     }
 
@@ -90,7 +91,7 @@ public class ReservationService {
             savedReservation.getId(),
             savedReservation.getCustomer().getName(),
             savedReservation.getCustomer().getPhoneNumber(),
-            savedReservation.getTable().getId(),
+            savedReservation.getRestaurantTable().getId(),
             savedReservation.getDate(),
             savedReservation.getTime(),
             savedReservation.getPartySize()

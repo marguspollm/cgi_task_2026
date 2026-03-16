@@ -3,7 +3,7 @@ package ee.margus.resto_reserv_app.util;
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
 import ee.margus.resto_reserv_app.dto.UserPreferences;
 import ee.margus.resto_reserv_app.model.RecommendedTableScore;
-import ee.margus.resto_reserv_app.model.Table;
+import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -13,12 +13,12 @@ import java.util.Set;
 import static ee.margus.resto_reserv_app.model.TableAttribute.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TableScoreCalculatorTest {
+class RestaurantTableScoreCalculatorTest {
 
     @Test
     void whenCapacityIsExactMatch_thenScoreIs10Points() {
-        Table table = new Table(1L, 4, Set.of(), 10, 10);
-        RecommendedTableScore rts = new RecommendedTableScore(table, 0);
+        RestaurantTable restaurantTable = new RestaurantTable(1L, 4, Set.of(), 10, 10);
+        RecommendedTableScore rts = new RecommendedTableScore(restaurantTable, 0);
         RecommendationRequest request =
             new RecommendationRequest(4, LocalDate.now(), LocalTime.now(), null);
 
@@ -29,8 +29,8 @@ class TableScoreCalculatorTest {
 
     @Test
     void whenCapacityPlusOne_thenScoreIs6Points() {
-        Table table = new Table(1L, 5, Set.of(), 10, 10);
-        RecommendedTableScore rts = new RecommendedTableScore(table, 0);
+        RestaurantTable restaurantTable = new RestaurantTable(1L, 5, Set.of(), 10, 10);
+        RecommendedTableScore rts = new RecommendedTableScore(restaurantTable, 0);
         RecommendationRequest request =
             new RecommendationRequest(4, LocalDate.now(), LocalTime.now(), null);
 
@@ -41,8 +41,8 @@ class TableScoreCalculatorTest {
 
     @Test
     void whenCapacityPlusTwo_thenScoreIs3Points() {
-        Table table = new Table(1L, 6, Set.of(), 10, 10);
-        RecommendedTableScore rts = new RecommendedTableScore(table, 0);
+        RestaurantTable restaurantTable = new RestaurantTable(1L, 6, Set.of(), 10, 10);
+        RecommendedTableScore rts = new RecommendedTableScore(restaurantTable, 0);
         RecommendationRequest request =
             new RecommendationRequest(4, LocalDate.now(), LocalTime.now(), null);
 
@@ -53,8 +53,8 @@ class TableScoreCalculatorTest {
 
     @Test
     void whenTooManyExtraSeats_thenApplyPenaltyFor() {
-        Table table = new Table(1L, 8, Set.of(), 10, 10);
-        RecommendedTableScore rts = new RecommendedTableScore(table, 0);
+        RestaurantTable restaurantTable = new RestaurantTable(1L, 8, Set.of(), 10, 10);
+        RecommendedTableScore rts = new RecommendedTableScore(restaurantTable, 0);
         RecommendationRequest request =
             new RecommendationRequest(4, LocalDate.now(), LocalTime.now(), null);
 
@@ -65,8 +65,8 @@ class TableScoreCalculatorTest {
 
     @Test
     void whenWindowPreference_thenAddPointsForWindowPreference() {
-        Table table = new Table(1L, 4, Set.of(WINDOW), 10, 10);
-        RecommendedTableScore rts = new RecommendedTableScore(table, 0);
+        RestaurantTable restaurantTable = new RestaurantTable(1L, 4, Set.of(WINDOW), 10, 10);
+        RecommendedTableScore rts = new RecommendedTableScore(restaurantTable, 0);
         RecommendationRequest request =
             new RecommendationRequest(
                 4,
@@ -81,8 +81,8 @@ class TableScoreCalculatorTest {
 
     @Test
     void whenMultiplePreferences_thenAddPointsForMultiplePreferences() {
-        Table table = new Table(1L, 4, Set.of(PRIVATE, EASY_ACCESSIBLE, NEAR_KIDS_AREA), 10, 10);
-        RecommendedTableScore rts = new RecommendedTableScore(table, 0);
+        RestaurantTable restaurantTable = new RestaurantTable(1L, 4, Set.of(PRIVATE, EASY_ACCESSIBLE, NEAR_KIDS_AREA), 10, 10);
+        RecommendedTableScore rts = new RecommendedTableScore(restaurantTable, 0);
         RecommendationRequest request =
             new RecommendationRequest(
                 4,
@@ -97,8 +97,8 @@ class TableScoreCalculatorTest {
 
     @Test
     void whenNoPreference_thenDoesNotAddPointsPreferencePoints() {
-        Table table = new Table(1L, 4, Set.of(WINDOW), 10, 10);
-        RecommendedTableScore rts = new RecommendedTableScore(table, 0);
+        RestaurantTable restaurantTable = new RestaurantTable(1L, 4, Set.of(WINDOW), 10, 10);
+        RecommendedTableScore rts = new RecommendedTableScore(restaurantTable, 0);
         RecommendationRequest request =
             new RecommendationRequest(
                 4,

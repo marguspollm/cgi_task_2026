@@ -1,9 +1,9 @@
 package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
+import ee.margus.resto_reserv_app.entity.Reservation;
+import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.model.RecommendedTableScore;
-import ee.margus.resto_reserv_app.model.Reservation;
-import ee.margus.resto_reserv_app.model.Table;
 import ee.margus.resto_reserv_app.repository.ReservationRepository;
 import ee.margus.resto_reserv_app.repository.TableRepository;
 import ee.margus.resto_reserv_app.util.TableScoreCalculator;
@@ -26,19 +26,19 @@ public class RecommendService {
     public Long getRecommendedTable(RecommendationRequest request) {
         validateRequest(request);
 
-        List<Table> notAvailableTables = reservationRepository.findAll()
+        List<RestaurantTable> notAvailableRestaurantTables = reservationRepository.findAll()
             .stream()
             .filter(reservation -> reservation.getDate().equals(request.date()))
             .filter(reservation ->
                 reservation.getTime().isBefore(request.time().plusHours(2))
                     && reservation.getTime().plusHours(2).isAfter(request.time())
             )
-            .map(Reservation::getTable)
+            .map(Reservation::getRestaurantTable)
             .toList();
 
         List<RecommendedTableScore> availableTableScore = tableRepository.findAll()
             .stream()
-            .filter(table -> !notAvailableTables.contains(table))
+            .filter(table -> !notAvailableRestaurantTables.contains(table))
             .filter(table -> table.getCapacity() >= request.partySize())
             .map(table -> new RecommendedTableScore(table, 0))
             .collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class RecommendService {
         return availableTableScore
             .stream()
             .findFirst()
-            .map(ts -> ts.getTable().getId())
+            .map(ts -> ts.getRestaurantTable().getId())
             .orElseThrow(() -> new RuntimeException("No available tables to recommend!"));
     }
 }

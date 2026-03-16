@@ -2,9 +2,9 @@ package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
 import ee.margus.resto_reserv_app.dto.UserPreferences;
-import ee.margus.resto_reserv_app.model.Customer;
-import ee.margus.resto_reserv_app.model.Reservation;
-import ee.margus.resto_reserv_app.model.Table;
+import ee.margus.resto_reserv_app.entity.Customer;
+import ee.margus.resto_reserv_app.entity.Reservation;
+import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.repository.ReservationRepository;
 import ee.margus.resto_reserv_app.repository.TableRepository;
 import org.junit.jupiter.api.Test;
@@ -38,11 +38,11 @@ class RecommendServiceTest {
     @Test
     void givenValidRequestAndTablesNotAvailable_whenGetRecommendedTable_thenThrowException() {
         RecommendationRequest request = new RecommendationRequest(2, DATE, TIME, null);
-        Table table = new Table(1L, 2, Set.of(), 10, 10);
-        Reservation existingReservation = new Reservation(1L, DATE, TIME, table, 2, new Customer("Test", "55555555"));
+        RestaurantTable restaurantTable = new RestaurantTable(1L, 2, Set.of(), 10, 10);
+        Reservation existingReservation = new Reservation(1L, DATE, TIME, restaurantTable, 2, new Customer("Test", "55555555"));
 
         when(reservationRepository.findAll()).thenReturn(List.of(existingReservation));
-        when(tableRepository.findAll()).thenReturn(List.of(table));
+        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable));
 
         Exception ex = assertThrows(RuntimeException.class, () -> recommendService.getRecommendedTable(request));
         assertEquals("No available tables to recommend!", ex.getMessage());
@@ -52,11 +52,11 @@ class RecommendServiceTest {
     void givenValidRequestAndTablesAvailable_whenGetRecommendedTable_thenReturnRecommendedTableId() {
         UserPreferences preferences = new UserPreferences(null, null, null, null);
         RecommendationRequest request = new RecommendationRequest(2, DATE, TIME, preferences);
-        Table table1 = new Table(1L, 2, Set.of(), 10, 10);
-        Table table2 = new Table(2L, 2, Set.of(WINDOW), 20, 10);
+        RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
+        RestaurantTable restaurantTable2 = new RestaurantTable(2L, 2, Set.of(WINDOW), 20, 10);
 
         when(reservationRepository.findAll()).thenReturn(List.of());
-        when(tableRepository.findAll()).thenReturn(List.of(table1, table2));
+        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable1, restaurantTable2));
 
         assertEquals(1L, recommendService.getRecommendedTable(request));
     }
@@ -65,11 +65,11 @@ class RecommendServiceTest {
     void givenValidRequestWithPreferencesAndTablesAvailable_whenGetRecommendedTable_thenReturnRecommendedTableId() {
         UserPreferences preferences = new UserPreferences(true, false, false, false);
         RecommendationRequest request = new RecommendationRequest(2, DATE, TIME, preferences);
-        Table table1 = new Table(1L, 2, Set.of(), 10, 10);
-        Table table2 = new Table(2L, 2, Set.of(WINDOW), 20, 10);
+        RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
+        RestaurantTable restaurantTable2 = new RestaurantTable(2L, 2, Set.of(WINDOW), 20, 10);
 
         when(reservationRepository.findAll()).thenReturn(List.of());
-        when(tableRepository.findAll()).thenReturn(List.of(table1, table2));
+        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable1, restaurantTable2));
 
         assertEquals(2L, recommendService.getRecommendedTable(request));
     }
@@ -78,11 +78,11 @@ class RecommendServiceTest {
     void givenTooSmallTable_whenGetRecommendedTable_thenReturnRecommendedTableId() {
         UserPreferences preferences = new UserPreferences(false, false, false, false);
         RecommendationRequest request = new RecommendationRequest(4, DATE, TIME, preferences);
-        Table table1 = new Table(1L, 2, Set.of(), 10, 10);
-        Table table2 = new Table(2L, 6, Set.of(WINDOW), 20, 10);
+        RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
+        RestaurantTable restaurantTable2 = new RestaurantTable(2L, 6, Set.of(WINDOW), 20, 10);
 
         when(reservationRepository.findAll()).thenReturn(List.of());
-        when(tableRepository.findAll()).thenReturn(List.of(table1, table2));
+        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable1, restaurantTable2));
 
         assertEquals(2L, recommendService.getRecommendedTable(request));
     }
@@ -91,11 +91,11 @@ class RecommendServiceTest {
     void givenRequestOutsideOfTimeWindow_whenGetRecommendedTable_thenReturnRecommendedTableId() {
         UserPreferences preferences = new UserPreferences(false, false, false, false);
         RecommendationRequest request = new RecommendationRequest(4, DATE, TIME, preferences);
-        Table table = new Table(1L, 4, Set.of(), 10, 10);
-        Reservation existingReservation = new Reservation(1L, DATE, TIME.minusHours(3), table, 2, new Customer("Test", "55555555"));
+        RestaurantTable restaurantTable = new RestaurantTable(1L, 4, Set.of(), 10, 10);
+        Reservation existingReservation = new Reservation(1L, DATE, TIME.minusHours(3), restaurantTable, 2, new Customer("Test", "55555555"));
 
         when(reservationRepository.findAll()).thenReturn(List.of(existingReservation));
-        when(tableRepository.findAll()).thenReturn(List.of(table));
+        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable));
 
         assertEquals(1L, recommendService.getRecommendedTable(request));
     }

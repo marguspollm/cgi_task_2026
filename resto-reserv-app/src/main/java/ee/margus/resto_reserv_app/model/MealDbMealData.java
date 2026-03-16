@@ -3,7 +3,7 @@ package ee.margus.resto_reserv_app.model;
 import lombok.Data;
 
 @Data
-public class MealDbMeal {
+public class MealDbMealData {
     private String idMeal;
     private String strMeal;
     private Object strMealAlternate;

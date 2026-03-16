@@ -1,5 +1,7 @@
-package ee.margus.resto_reserv_app.model;
+package ee.margus.resto_reserv_app.entity;
 
+import ee.margus.resto_reserv_app.model.TableAttribute;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,13 +13,24 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Table {
+@Entity
+public class RestaurantTable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private int capacity;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(
+        name = "table_attributes",
+        joinColumns = @JoinColumn(name = "table_id")
+    )
     private Set<TableAttribute> attribute;
 
-    private Integer locationX;
-    private Integer locationY;
+    private int locationX;
+    private int locationY;
 
     @Override
     public String toString() {

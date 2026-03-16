@@ -1,7 +1,7 @@
 package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.MealDto;
-import ee.margus.resto_reserv_app.model.MealDbMeal;
+import ee.margus.resto_reserv_app.model.MealDbMealData;
 import ee.margus.resto_reserv_app.model.MealDbResponse;
 import ee.margus.resto_reserv_app.util.RandomGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class MealService {
                     .getBody();
 
             if (response != null && response.getMeals() != null && !response.getMeals().isEmpty()){
-                MealDbMeal meal = response.getMeals().getFirst();
+                MealDbMealData meal = response.getMeals().getFirst();
                 MealDto mealDto =
                     new MealDto(
                         Long.valueOf(meal.getIdMeal()),

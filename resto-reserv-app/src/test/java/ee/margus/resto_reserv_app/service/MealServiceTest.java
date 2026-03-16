@@ -1,7 +1,7 @@
 package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.MealDto;
-import ee.margus.resto_reserv_app.model.MealDbMeal;
+import ee.margus.resto_reserv_app.model.MealDbMealData;
 import ee.margus.resto_reserv_app.model.MealDbResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,7 +37,7 @@ class MealServiceTest {
 
     @Test
     void getRecommendedMeals_shouldReturnFourMeals() {
-        MealDbMeal meal = new MealDbMeal();
+        MealDbMealData meal = new MealDbMealData();
         meal.setIdMeal("123");
         meal.setStrMeal("Test Meal");
 

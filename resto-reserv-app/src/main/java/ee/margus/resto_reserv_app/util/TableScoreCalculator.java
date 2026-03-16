@@ -2,8 +2,8 @@ package ee.margus.resto_reserv_app.util;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
 import ee.margus.resto_reserv_app.dto.UserPreferences;
+import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.model.RecommendedTableScore;
-import ee.margus.resto_reserv_app.model.Table;
 import ee.margus.resto_reserv_app.model.TableAttribute;
 
 import java.util.Set;
@@ -14,18 +14,18 @@ public class TableScoreCalculator {
     public static int score(RecommendedTableScore ts, RecommendationRequest request) {
         int score = 0;
         UserPreferences userPreferences = request.userPreferences();
-        Table table = ts.getTable();
-        Set<TableAttribute> attr = table.getAttribute();
+        RestaurantTable restaurantTable = ts.getRestaurantTable();
+        Set<TableAttribute> attr = restaurantTable.getAttribute();
 
-        if (table.getCapacity() == request.partySize()) {
+        if (restaurantTable.getCapacity() == request.partySize()) {
             score += 10;
-        } else if (table.getCapacity() == request.partySize() + 1) {
+        } else if (restaurantTable.getCapacity() == request.partySize() + 1) {
             score += 6;
-        } else if (table.getCapacity() == request.partySize() + 2) {
+        } else if (restaurantTable.getCapacity() == request.partySize() + 2) {
             score += 3;
         }
 
-        int extraSeats = table.getCapacity() - request.partySize();
+        int extraSeats = restaurantTable.getCapacity() - request.partySize();
         if (extraSeats > 2) score -= extraSeats;
 
         if (attr.contains(WINDOW) && Boolean.TRUE.equals(userPreferences.isWindow()))

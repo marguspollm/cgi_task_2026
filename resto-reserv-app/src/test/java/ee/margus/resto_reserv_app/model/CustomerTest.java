@@ -1,5 +1,6 @@
 package ee.margus.resto_reserv_app.model;
 
+import ee.margus.resto_reserv_app.entity.Customer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

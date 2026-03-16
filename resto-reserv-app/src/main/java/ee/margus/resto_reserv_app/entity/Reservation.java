@@ -1,5 +1,6 @@
-package ee.margus.resto_reserv_app.model;
+package ee.margus.resto_reserv_app.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,15 +13,22 @@ import java.time.LocalTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Reservation {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate date;
     private LocalTime time;
 
-    private Table table;
+    @ManyToOne
+    @JoinColumn(name = "restaurant_table_id")
+    private RestaurantTable restaurantTable;
     private int partySize;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     @Override
@@ -29,9 +37,9 @@ public class Reservation {
             "id=" + id +
             ", date=" + date +
             ", time=" + time +
-            ", table=" + table +
+            ", restaurantTableId=" + restaurantTable.getId() +
             ", partySize=" + partySize +
-            ", customer=" + customer +
+            ", customerId=" + customer.getId() +
             '}';
     }
 }

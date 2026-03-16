@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class MealDbResponse {
-    private List<MealDbMeal> meals;
+    private List<MealDbMealData> meals;
 }

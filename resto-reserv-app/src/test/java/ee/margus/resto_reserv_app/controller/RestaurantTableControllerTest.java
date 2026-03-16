@@ -1,6 +1,6 @@
 package ee.margus.resto_reserv_app.controller;
 
-import ee.margus.resto_reserv_app.model.Table;
+import ee.margus.resto_reserv_app.dto.TableDto;
 import ee.margus.resto_reserv_app.service.TableService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TableController.class)
-class TableControllerTest {
+class RestaurantTableControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -26,9 +26,8 @@ class TableControllerTest {
 
     @Test
     void getAllTables_thenReturnList() throws Exception{
-        Table table = new Table();
-        table.setId(1L);
-        List<Table> tables = List.of(table);
+        TableDto table = new TableDto(1L, 1, null, 10, 10);
+        List<TableDto> tables = List.of(table);
 
         when(tableService.getAllTables()).thenReturn(tables);
 

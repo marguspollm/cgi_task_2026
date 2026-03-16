@@ -1,6 +1,6 @@
 package ee.margus.resto_reserv_app.service;
 
-import ee.margus.resto_reserv_app.model.Table;
+import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.repository.TableRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TableServiceTest {
+class RestaurantTableServiceTest {
     @Mock
     private TableRepository tableRepository;
     @InjectMocks
@@ -23,13 +23,13 @@ class TableServiceTest {
 
     @Test
     void whenGetAllTables_thenReturnListOfAllTables(){
-        List<Table> tables = new ArrayList<>();
+        List<RestaurantTable> restaurantTables = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            Table table = new Table();
-            tables.add(table);
+            RestaurantTable restaurantTable = new RestaurantTable();
+            restaurantTables.add(restaurantTable);
         }
 
-        when(tableRepository.findAll()).thenReturn(tables);
+        when(tableRepository.findAll()).thenReturn(restaurantTables);
 
         assertEquals(5, tableService.getAllTables().size());
     }

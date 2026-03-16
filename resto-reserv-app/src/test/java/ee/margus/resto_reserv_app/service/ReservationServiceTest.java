@@ -2,9 +2,9 @@ package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.ReservationRequest;
 import ee.margus.resto_reserv_app.dto.ReservationResponse;
-import ee.margus.resto_reserv_app.model.Customer;
-import ee.margus.resto_reserv_app.model.Reservation;
-import ee.margus.resto_reserv_app.model.Table;
+import ee.margus.resto_reserv_app.entity.Customer;
+import ee.margus.resto_reserv_app.entity.Reservation;
+import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.repository.ReservationRepository;
 import ee.margus.resto_reserv_app.repository.TableRepository;
 import org.jspecify.annotations.NonNull;
@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,10 +36,10 @@ class ReservationServiceTest {
     @InjectMocks
     private ReservationService service;
 
-    private static @NonNull Reservation getReservation(Table table, LocalDate date, LocalTime time, int partySize) {
+    private static @NonNull Reservation getReservation(RestaurantTable restaurantTable, LocalDate date, LocalTime time, int partySize) {
         Reservation exisitngReservation = new Reservation();
         exisitngReservation.setId(1L);
-        exisitngReservation.setTable(table);
+        exisitngReservation.setRestaurantTable(restaurantTable);
         exisitngReservation.setCustomer(new Customer("Test Tester", "5555555"));
         exisitngReservation.setDate(date);
         exisitngReservation.setTime(time);
@@ -46,8 +47,8 @@ class ReservationServiceTest {
         return exisitngReservation;
     }
 
-    private static @NonNull Table getTable(Long id) {
-        return new Table(id, 2, null, 10, 10);
+    private static @NonNull RestaurantTable getTable(Long id) {
+        return new RestaurantTable(id, 2, null, 10, 10);
     }
 
     private static @NonNull ReservationRequest getRequest(LocalDate date, LocalTime time) {
@@ -64,11 +65,11 @@ class ReservationServiceTest {
     void givenValidReservationRequest_whenCreateReservation_thenSaveReservationAndReturnResponse() {
         ReservationRequest request = getRequest(DATE, TIME);
 
-        Table table = getTable(1L);
+        RestaurantTable restaurantTable = getTable(1L);
 
-        Reservation dbReservation = getReservation(table, DATE, TIME, request.partySize());
+        Reservation dbReservation = getReservation(restaurantTable, DATE, TIME, request.partySize());
 
-        when(tableRepository.findById(1L)).thenReturn(table);
+        when(tableRepository.findById(1L)).thenReturn(Optional.of(restaurantTable));
         when(reservationRepository.save(any(Reservation.class))).thenReturn(dbReservation);
 
         ReservationResponse response = service.create(request);
@@ -83,9 +84,9 @@ class ReservationServiceTest {
     void givenOverlapingReservationRequest_whenCreateReservation_thenThrowException() {
         ReservationRequest request = getRequest(DATE, TIME);
 
-        Table table = getTable(1L);
+        RestaurantTable restaurantTable = getTable(1L);
 
-        Reservation exisitngReservation = getReservation(table, DATE, TIME, request.partySize());
+        Reservation exisitngReservation = getReservation(restaurantTable, DATE, TIME, request.partySize());
 
         when(reservationRepository.findAll()).thenReturn(List.of(exisitngReservation));
 
@@ -95,8 +96,8 @@ class ReservationServiceTest {
 
     @Test
     void givenCurrentDateOrTime_whenGetReservedTables_thenReturnCurrentReservedTableIds() {
-        Table table = getTable(1L);
-        Reservation reservation = getReservation(table, LocalDate.now(), LocalTime.now(), 2);
+        RestaurantTable restaurantTable = getTable(1L);
+        Reservation reservation = getReservation(restaurantTable, LocalDate.now(), LocalTime.now(), 2);
 
         when(reservationRepository.findAll()).thenReturn(List.of(reservation));
 
@@ -105,12 +106,12 @@ class ReservationServiceTest {
 
     @Test
     void givenDateAndTime_whenGetReservedTables_thenReturnGivenDateTimeReservedTableIds() {
-        Table table1 = getTable(1L);
-        Table table2 = getTable(2L);
-        Table table3 = getTable(3L);
-        Reservation reservation1 = getReservation(table1, LocalDate.now(), LocalTime.now(), 2);
-        Reservation reservation2 = getReservation(table2, DATE, TIME, 2);
-        Reservation reservation3 = getReservation(table3, DATE, TIME, 2);
+        RestaurantTable restaurantTable1 = getTable(1L);
+        RestaurantTable restaurantTable2 = getTable(2L);
+        RestaurantTable restaurantTable3 = getTable(3L);
+        Reservation reservation1 = getReservation(restaurantTable1, LocalDate.now(), LocalTime.now(), 2);
+        Reservation reservation2 = getReservation(restaurantTable2, DATE, TIME, 2);
+        Reservation reservation3 = getReservation(restaurantTable3, DATE, TIME, 2);
 
 
         when(reservationRepository.findAll()).thenReturn(List.of(reservation1, reservation2, reservation3));

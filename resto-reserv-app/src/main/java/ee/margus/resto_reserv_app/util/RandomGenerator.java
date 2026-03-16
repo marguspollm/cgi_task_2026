@@ -1,8 +1,7 @@
 package ee.margus.resto_reserv_app.util;
 
-import ee.margus.resto_reserv_app.model.Customer;
-import ee.margus.resto_reserv_app.model.Reservation;
-import ee.margus.resto_reserv_app.model.Table;
+import ee.margus.resto_reserv_app.entity.Reservation;
+import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.model.TableAttribute;
 
 import java.time.LocalDate;
@@ -13,7 +12,7 @@ import java.util.*;
 public class RandomGenerator {
     private static final Random random = new Random();
 
-    public static List<Reservation> reservations(List<Table> tables) {
+    public static List<Reservation> reservations(List<RestaurantTable> restaurantTables) {
 
         List<Reservation> reservations = new ArrayList<>();
 
@@ -29,13 +28,10 @@ public class RandomGenerator {
             r.setDate(date);
             r.setTime(time);
 
-            Table table = tables.get(random.nextInt(tables.size()));
-            r.setTable(table);
+            RestaurantTable restaurantTable = restaurantTables.get(random.nextInt(restaurantTables.size()));
+            r.setRestaurantTable(restaurantTable);
 
-            Customer customer = new Customer("Test Tester", "55555555");
-            r.setCustomer(customer);
-
-            r.setPartySize(1 + random.nextInt(table.getCapacity()));
+            r.setPartySize(1 + random.nextInt(restaurantTable.getCapacity()));
 
             reservations.add(r);
         }
@@ -43,8 +39,8 @@ public class RandomGenerator {
         return reservations;
     }
 
-    public static List<Table> tables() {
-        List<Table> tables = new ArrayList<>();
+    public static List<RestaurantTable> tables() {
+        List<RestaurantTable> restaurantTables = new ArrayList<>();
         long id = 1;
         int spacingX = 100;
         int spacingY = 100;
@@ -61,23 +57,22 @@ public class RandomGenerator {
                     if (i < taValesLength) attrs.add(taValues[i]);
                 }
 
+                RestaurantTable rt = new RestaurantTable();
+                rt.setCapacity(random.nextInt(1, 10));
+                rt.setAttribute(attrs);
+                rt.setLocationX(100 + col * spacingX);
+                rt.setLocationY(100 + row * spacingY);
 
-                Table table = new Table(
-                    id++,
-                    random.nextInt(1, 10),
-                    attrs,
-                    100 + col * spacingX,
-                    100 + row * spacingY
-                );
-System.out.println(table);
-                tables.add(table);
+                System.out.println(rt);
+
+                restaurantTables.add(rt);
             }
         }
 
-        return tables;
+        return restaurantTables;
     }
 
-    public static int price(){
+    public static int price() {
         return random.nextInt(100);
     }
 }

@@ -33,6 +33,7 @@ target/
 *.sln
 *.sw?
 HELP.md
+data
 
 # STS
 .apt_generated
