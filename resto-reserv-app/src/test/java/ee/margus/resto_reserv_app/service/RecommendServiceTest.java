@@ -2,10 +2,7 @@ package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
 import ee.margus.resto_reserv_app.dto.UserPreferences;
-import ee.margus.resto_reserv_app.entity.Customer;
-import ee.margus.resto_reserv_app.entity.Reservation;
 import ee.margus.resto_reserv_app.entity.RestaurantTable;
-import ee.margus.resto_reserv_app.repository.ReservationRepository;
 import ee.margus.resto_reserv_app.repository.TableRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +18,8 @@ import java.util.Set;
 import static ee.margus.resto_reserv_app.model.TableAttribute.WINDOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,20 +28,17 @@ class RecommendServiceTest {
     public static final LocalTime TIME = LocalTime.now().plusHours(2);
     @Mock
     private TableRepository tableRepository;
-    @Mock
-    private ReservationRepository reservationRepository;
 
     @InjectMocks
     private RecommendService recommendService;
 
     @Test
     void givenValidRequestAndTablesNotAvailable_whenGetRecommendedTable_thenThrowException() {
-        RecommendationRequest request = new RecommendationRequest(2, DATE, TIME, null);
-        RestaurantTable restaurantTable = new RestaurantTable(1L, 2, Set.of(), 10, 10);
-        Reservation existingReservation = new Reservation(1L, DATE, TIME, restaurantTable, 2, new Customer("Test", "55555555"));
+        RecommendationRequest request =
+            new RecommendationRequest(2, DATE, TIME, null);
 
-        when(reservationRepository.findAll()).thenReturn(List.of(existingReservation));
-        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable));
+        when(tableRepository.findByCapacityGreaterThanEqual(anyInt(), any(), any(), any()))
+            .thenReturn(List.of());
 
         Exception ex = assertThrows(RuntimeException.class, () -> recommendService.getRecommendedTable(request));
         assertEquals("No available tables to recommend!", ex.getMessage());
@@ -55,8 +51,8 @@ class RecommendServiceTest {
         RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
         RestaurantTable restaurantTable2 = new RestaurantTable(2L, 2, Set.of(WINDOW), 20, 10);
 
-        when(reservationRepository.findAll()).thenReturn(List.of());
-        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable1, restaurantTable2));
+        when(tableRepository.findByCapacityGreaterThanEqual(anyInt(), any(), any(), any()))
+            .thenReturn(List.of(restaurantTable1, restaurantTable2));
 
         assertEquals(1L, recommendService.getRecommendedTable(request));
     }
@@ -68,8 +64,8 @@ class RecommendServiceTest {
         RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
         RestaurantTable restaurantTable2 = new RestaurantTable(2L, 2, Set.of(WINDOW), 20, 10);
 
-        when(reservationRepository.findAll()).thenReturn(List.of());
-        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable1, restaurantTable2));
+        when(tableRepository.findByCapacityGreaterThanEqual(anyInt(), any(), any(), any()))
+            .thenReturn(List.of(restaurantTable1, restaurantTable2));
 
         assertEquals(2L, recommendService.getRecommendedTable(request));
     }
@@ -81,8 +77,8 @@ class RecommendServiceTest {
         RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
         RestaurantTable restaurantTable2 = new RestaurantTable(2L, 6, Set.of(WINDOW), 20, 10);
 
-        when(reservationRepository.findAll()).thenReturn(List.of());
-        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable1, restaurantTable2));
+        when(tableRepository.findByCapacityGreaterThanEqual(anyInt(), any(), any(), any()))
+            .thenReturn(List.of(restaurantTable1, restaurantTable2));
 
         assertEquals(2L, recommendService.getRecommendedTable(request));
     }
@@ -92,10 +88,9 @@ class RecommendServiceTest {
         UserPreferences preferences = new UserPreferences(false, false, false, false);
         RecommendationRequest request = new RecommendationRequest(4, DATE, TIME, preferences);
         RestaurantTable restaurantTable = new RestaurantTable(1L, 4, Set.of(), 10, 10);
-        Reservation existingReservation = new Reservation(1L, DATE, TIME.minusHours(3), restaurantTable, 2, new Customer("Test", "55555555"));
 
-        when(reservationRepository.findAll()).thenReturn(List.of(existingReservation));
-        when(tableRepository.findAll()).thenReturn(List.of(restaurantTable));
+        when(tableRepository.findByCapacityGreaterThanEqual(anyInt(), any(), any(), any()))
+            .thenReturn(List.of(restaurantTable));
 
         assertEquals(1L, recommendService.getRecommendedTable(request));
     }

@@ -1,14 +1,12 @@
 package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
-import ee.margus.resto_reserv_app.entity.Reservation;
-import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.model.RecommendedTableScore;
-import ee.margus.resto_reserv_app.repository.ReservationRepository;
 import ee.margus.resto_reserv_app.repository.TableRepository;
 import ee.margus.resto_reserv_app.util.TableScoreCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,27 +17,20 @@ import static ee.margus.resto_reserv_app.util.Validator.validateRequest;
 @Service
 public class RecommendService {
     @Autowired
-    private ReservationRepository reservationRepository;
-    @Autowired
     private TableRepository tableRepository;
 
+    @Transactional(readOnly = true)
     public Long getRecommendedTable(RecommendationRequest request) {
         validateRequest(request);
 
-        List<RestaurantTable> notAvailableRestaurantTables = reservationRepository.findAll()
-            .stream()
-            .filter(reservation -> reservation.getDate().equals(request.date()))
-            .filter(reservation ->
-                reservation.getTime().isBefore(request.time().plusHours(2))
-                    && reservation.getTime().plusHours(2).isAfter(request.time())
+        List<RecommendedTableScore> availableTableScore = tableRepository
+            .findByCapacityGreaterThanEqual(
+                request.partySize(),
+                request.date(),
+                request.time().minusHours(2),
+                request.time().plusHours(2)
             )
-            .map(Reservation::getRestaurantTable)
-            .toList();
-
-        List<RecommendedTableScore> availableTableScore = tableRepository.findAll()
             .stream()
-            .filter(table -> !notAvailableRestaurantTables.contains(table))
-            .filter(table -> table.getCapacity() >= request.partySize())
             .map(table -> new RecommendedTableScore(table, 0))
             .collect(Collectors.toList());
 
