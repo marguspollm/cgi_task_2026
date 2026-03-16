@@ -4,7 +4,6 @@ import {
   Divider,
   FormControlLabel,
   Grid,
-  MenuItem,
   Paper,
   Stack,
   TextField,
@@ -12,6 +11,7 @@ import {
 } from "@mui/material";
 import type { FormErrors } from "../models/FormErrors";
 import type { ReservationFormState } from "../models/ReservationFormState";
+import InputTimeSlots from "./InputTimeSlots";
 
 type ReservationFormProps = {
   form: ReservationFormState;
@@ -34,31 +34,11 @@ function ReservationForm({
   formChange,
   formPreferenceChange,
 }: ReservationFormProps) {
-  const generateTimeSlots = () => {
-    return Array.from(
-      { length: 24 },
-      (_, i) => `${String(i).padStart(2, "0")}:00`,
-    );
-  };
-
   return (
     <Paper sx={{ p: 3 }}>
       <form onSubmit={checkAvailability} noValidate>
         <Stack spacing={3}>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 5 }}>
-              <TextField
-                label="Party size:"
-                type="number"
-                value={form.partySize}
-                fullWidth
-                required
-                onChange={e => formChange("partySize", e.target.value)}
-                error={!!errors.partySize}
-                helperText={errors.partySize}
-              />
-            </Grid>
-
             <Grid size={{ xs: 12, md: 5 }}>
               <TextField
                 label="Date:"
@@ -76,22 +56,25 @@ function ReservationForm({
             </Grid>
 
             <Grid size={{ xs: 12, md: 5 }}>
-              <TextField
-                label="Time"
-                select
+              <InputTimeSlots
                 value={form.time}
+                onChange={formChange}
+                errors={errors}
+                fullWidth={true}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 5 }}>
+              <TextField
+                label="Party size:"
+                type="number"
+                value={form.partySize}
                 fullWidth
                 required
-                onChange={e => formChange("time", e.target.value)}
-                error={!!errors.time}
-                helperText={errors.time}
-              >
-                {generateTimeSlots().map(slot => (
-                  <MenuItem key={slot} value={slot}>
-                    {slot}
-                  </MenuItem>
-                ))}
-              </TextField>
+                onChange={e => formChange("partySize", e.target.value)}
+                error={!!errors.partySize}
+                helperText={errors.partySize}
+              />
             </Grid>
           </Grid>
 

@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -28,15 +29,19 @@ function ReservationConfirmationCard({
 }: ReservationConfirmationCardProps) {
   const [recommendedMeals, setRecommendedMeals] = useState<Meal[]>([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loadingMeals, setLoadingMeals] = useState(false);
 
   useEffect(() => {
     const fetchMeals = async () => {
       if (!confirmedReservation) return;
       try {
+        setLoadingMeals(true);
         const data = await getRecommendedMeals();
         setRecommendedMeals(data);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoadingMeals(false);
       }
     };
 
@@ -104,15 +109,26 @@ function ReservationConfirmationCard({
               </Typography>
             </DialogContent>
           )}
-
-          {recommendedMeals.length !== 0 && (
-            <Box>
+          <Box>
+            {loadingMeals && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  py: 4,
+                }}
+              >
+                <CircularProgress size={32} />
+              </Box>
+            )}
+            {!loadingMeals && recommendedMeals.length > 0 && (
               <MealsCarousel
                 recommendedMeals={recommendedMeals}
                 handlePreoderClick={handlePreOrder}
               />
-            </Box>
-          )}
+            )}
+          </Box>
         </Box>
       </Dialog>
       <Snackbar

@@ -1,4 +1,4 @@
-import { Alert, Box, Container, Grid } from "@mui/material";
+import { Alert, Box, Container, Grid, Typography } from "@mui/material";
 import Floor from "../components/Floor";
 import { useEffect, useState } from "react";
 import type { FormErrors } from "../models/FormErrors";
@@ -21,11 +21,13 @@ import ReservationForm from "../components/ReservationForm";
 import { ApiError } from "../models/ApiError";
 import type { ReservationResponse } from "../models/ReservationResponse";
 import ReservationConfirmationCard from "../components/ReservationConfirmationCard";
+import { createDate, formatDate } from "../utils/formatters";
 
 function ReservationPage() {
+  const today = new Date().toISOString().split("T")[0];
   const defaultForm = {
     partySize: 0,
-    date: "",
+    date: today,
     time: "",
     customerName: "",
     phoneNumber: "",
@@ -182,49 +184,54 @@ function ReservationPage() {
   };
 
   return (
-    <Container>
+    <>
       {error && <Alert severity="error">{error}</Alert>}
+      <Container sx={{ py: 3 }}>
+        <ReservationConfirmationCard
+          open={successOpen}
+          handleOpen={setSuccessOpen}
+          confirmedReservation={confirmedReservation}
+        />
 
-      <ReservationConfirmationCard
-        open={successOpen}
-        handleOpen={setSuccessOpen}
-        confirmedReservation={confirmedReservation}
-      />
+        <Grid container spacing={{ xs: 2, md: 4 }}>
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Box sx={{ width: "100%" }}>
+              <Typography sx={{ mb: 2, fontWeight: 700, textAlign: "center" }}>
+                Available tables for:{" "}
+                {reservationForm.time
+                  ? formatDate(
+                      createDate(reservationForm.date, reservationForm.time),
+                    )
+                  : formatDate(new Date())}
+              </Typography>
 
-      <Grid container spacing={{ xs: 2, md: 4 }}>
-        <Grid size={{ xs: 12, md: 7 }}>
-          <Box
-            sx={{
-              maxWidth: 950,
-              width: "100%",
-            }}
-          >
-            <Floor
-              tables={tables}
-              booked={bookedTables}
-              setSelectedTable={handleTableClick}
-              selectedTable={selectedTable}
-              recommendedTable={recommededTable}
-            />
-          </Box>
+              <Floor
+                tables={tables}
+                booked={bookedTables}
+                setSelectedTable={handleTableClick}
+                selectedTable={selectedTable}
+                recommendedTable={recommededTable}
+              />
+            </Box>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Box sx={{ width: "100%", maxWidth: 500 }}>
+              <ReservationForm
+                form={reservationForm}
+                checkAvailability={handleCheckAvailability}
+                formChange={handleFormChange}
+                formPreferenceChange={handleFormPreferenceChange}
+                selectedTable={selectedTable}
+                loading={loading}
+                confirmReservation={handleConfirmReservation}
+                errors={formErrors}
+              />
+            </Box>
+          </Grid>
         </Grid>
-
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Box sx={{ width: "100%", maxWidth: 500 }}>
-            <ReservationForm
-              form={reservationForm}
-              checkAvailability={handleCheckAvailability}
-              formChange={handleFormChange}
-              formPreferenceChange={handleFormPreferenceChange}
-              selectedTable={selectedTable}
-              loading={loading}
-              confirmReservation={handleConfirmReservation}
-              errors={formErrors}
-            />
-          </Box>
-        </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </>
   );
 }
 
