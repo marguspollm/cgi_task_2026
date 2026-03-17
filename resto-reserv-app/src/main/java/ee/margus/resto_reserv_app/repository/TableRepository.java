@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface TableRepository extends JpaRepository<RestaurantTable, Long> {
-    // With help from Gemini - to get all tables that are booked and match customer party size for Recommendation service
+    // Get all tables that are booked and match customer party size for Recommendation service (with help from Gemini AI)
     @Query("""
         SELECT rt
         FROM RestaurantTable rt

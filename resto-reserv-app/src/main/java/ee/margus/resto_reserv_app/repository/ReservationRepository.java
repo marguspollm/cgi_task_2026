@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    // Help with Gemini to filter reservations
+    // Filter reservations (with help from Gemini)
     @Query("""
         SELECT r FROM Reservation r WHERE
                 (:date IS NULL OR r.date = :date) AND
@@ -22,4 +22,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 (:name IS NULL OR :name = '' OR LOWER(r.customer.name) LIKE LOWER(CONCAT('%', :name, '%')))
         """)
     Page<Reservation> findWithOptionalFilters(LocalDate date, LocalTime time, String name, Pageable pageable);
+
+    boolean existsByRestaurantTable_IdAndDateGreaterThanEqual(Long id, LocalDate date);
+
 }

@@ -1,6 +1,7 @@
 package ee.margus.resto_reserv_app.controller;
 
 import ee.margus.resto_reserv_app.dto.TableDto;
+import ee.margus.resto_reserv_app.model.TableAttribute;
 import ee.margus.resto_reserv_app.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,4 +26,8 @@ public class TableController {
         return tableService.saveTables(tables);
     }
 
+    @GetMapping("table-attributes")
+    public TableAttribute[] getAttributes() {
+        return TableAttribute.values();
+    }
 }
