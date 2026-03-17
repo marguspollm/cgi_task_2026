@@ -37,9 +37,9 @@ public class Reservation {
             "id=" + id +
             ", date=" + date +
             ", time=" + time +
-            ", restaurantTableId=" + restaurantTable.getId() +
+            ", restaurantTableId=" + (restaurantTable != null ? restaurantTable.getId() : null) +
             ", partySize=" + partySize +
-            ", customerId=" + customer.getId() +
+            ", customerId=" + (customer != null ? customer.getId() : null) +
             '}';
     }
 }

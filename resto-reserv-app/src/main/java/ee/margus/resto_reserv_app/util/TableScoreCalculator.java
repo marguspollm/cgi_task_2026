@@ -1,7 +1,6 @@
 package ee.margus.resto_reserv_app.util;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
-import ee.margus.resto_reserv_app.dto.UserPreferences;
 import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.model.RecommendedTableScore;
 import ee.margus.resto_reserv_app.model.TableAttribute;
@@ -13,7 +12,7 @@ import static ee.margus.resto_reserv_app.model.TableAttribute.*;
 public class TableScoreCalculator {
     public static int score(RecommendedTableScore ts, RecommendationRequest request) {
         int score = 0;
-        UserPreferences userPreferences = request.userPreferences();
+        Set<TableAttribute> userPreferences = request.userPreferences();
         RestaurantTable restaurantTable = ts.getRestaurantTable();
         Set<TableAttribute> attr = restaurantTable.getAttributes();
 
@@ -28,13 +27,13 @@ public class TableScoreCalculator {
         int extraSeats = restaurantTable.getCapacity() - request.partySize();
         if (extraSeats > 2) score -= extraSeats;
 
-        if (attr.contains(WINDOW) && Boolean.TRUE.equals(userPreferences.isWindow()))
+        if (attr.contains(WINDOW) && userPreferences.contains(WINDOW))
             score += 2;
-        if (attr.contains(PRIVATE) && Boolean.TRUE.equals(userPreferences.isPrivate()))
+        if (attr.contains(PRIVATE) && userPreferences.contains(PRIVATE))
             score += 2;
-        if (attr.contains(EASY_ACCESSIBLE) && Boolean.TRUE.equals(userPreferences.isEasyAccess()))
+        if (attr.contains(EASY_ACCESSIBLE) && userPreferences.contains(EASY_ACCESSIBLE))
             score += 2;
-        if (attr.contains(NEAR_KIDS_AREA) && Boolean.TRUE.equals(userPreferences.isNearKidsArea()))
+        if (attr.contains(NEAR_KIDS_AREA) && userPreferences.contains(NEAR_KIDS_AREA))
             score += 2;
 
         return score;

@@ -1,7 +1,6 @@
 package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
-import ee.margus.resto_reserv_app.dto.UserPreferences;
 import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.repository.TableRepository;
 import org.junit.jupiter.api.Test;
@@ -46,8 +45,7 @@ class RecommendServiceTest {
 
     @Test
     void givenValidRequestAndTablesAvailable_whenGetRecommendedTable_thenReturnRecommendedTableId() {
-        UserPreferences preferences = new UserPreferences(null, null, null, null);
-        RecommendationRequest request = new RecommendationRequest(2, DATE, TIME, preferences);
+        RecommendationRequest request = new RecommendationRequest(2, DATE, TIME, Set.of());
         RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
         RestaurantTable restaurantTable2 = new RestaurantTable(2L, 2, Set.of(WINDOW), 20, 10);
 
@@ -59,8 +57,7 @@ class RecommendServiceTest {
 
     @Test
     void givenValidRequestWithPreferencesAndTablesAvailable_whenGetRecommendedTable_thenReturnRecommendedTableId() {
-        UserPreferences preferences = new UserPreferences(true, false, false, false);
-        RecommendationRequest request = new RecommendationRequest(2, DATE, TIME, preferences);
+        RecommendationRequest request = new RecommendationRequest(2, DATE, TIME, Set.of(WINDOW));
         RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
         RestaurantTable restaurantTable2 = new RestaurantTable(2L, 2, Set.of(WINDOW), 20, 10);
 
@@ -72,8 +69,7 @@ class RecommendServiceTest {
 
     @Test
     void givenTooSmallTable_whenGetRecommendedTable_thenReturnRecommendedTableId() {
-        UserPreferences preferences = new UserPreferences(false, false, false, false);
-        RecommendationRequest request = new RecommendationRequest(4, DATE, TIME, preferences);
+        RecommendationRequest request = new RecommendationRequest(4, DATE, TIME, Set.of());
         RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
         RestaurantTable restaurantTable2 = new RestaurantTable(2L, 6, Set.of(WINDOW), 20, 10);
 
@@ -85,8 +81,7 @@ class RecommendServiceTest {
 
     @Test
     void givenRequestOutsideOfTimeWindow_whenGetRecommendedTable_thenReturnRecommendedTableId() {
-        UserPreferences preferences = new UserPreferences(false, false, false, false);
-        RecommendationRequest request = new RecommendationRequest(4, DATE, TIME, preferences);
+        RecommendationRequest request = new RecommendationRequest(4, DATE, TIME, Set.of());
         RestaurantTable restaurantTable = new RestaurantTable(1L, 4, Set.of(), 10, 10);
 
         when(tableRepository.findByCapacityGreaterThanEqual(anyInt(), any(), any(), any()))

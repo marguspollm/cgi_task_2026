@@ -25,4 +25,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     boolean existsByRestaurantTable_IdAndDateGreaterThanEqual(Long id, LocalDate date);
 
+
+
+    List<Reservation> findByDateAndTimeBetweenAndRestaurantTable_Id(LocalDate date, LocalTime timeStart, LocalTime timeEnd, Long id);
+
+    List<Reservation> findByDateAndTime(LocalDate date, LocalTime time);
+
 }

@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  getTableAttributes,
-  getTables,
-  saveTables,
-} from "../../services/table.service";
+import { getTables, saveTables } from "../../services/table.service";
 import type { Table } from "../../models/Table";
 import type { MovabelTable } from "../../models/MovableTable";
 import {
@@ -14,18 +10,17 @@ import {
   Button,
   Alert,
   Container,
-  Autocomplete,
 } from "@mui/material";
 import { handleError } from "../../utils/errors";
 import Floor from "../../components/Floor";
 import { validateNewTable } from "../../utils/validations";
 import type { NewTableErrors } from "../../models/FormErrors";
 import type { TableAttribute } from "../../models/TableAttribute";
+import TableAttributesSelect from "../../components/TableAttributesSelect";
 
 function AdminFloorEditor() {
   const [tables, setTables] = useState<MovabelTable[]>([]);
   const [originalTables, setOriginalTables] = useState<MovabelTable[]>([]);
-  const [attributes, setAttributes] = useState<TableAttribute[]>([]);
 
   const [newCapacity, setNewCapacity] = useState(0);
   const [newAttributes, setNewAttributes] = useState<TableAttribute[]>([]);
@@ -63,19 +58,6 @@ function AdminFloorEditor() {
     };
     fetchTables();
   }, []);
-
-  useEffect(() => {
-    const fetchAttributes = async () => {
-      try {
-        const data = await getTableAttributes();
-        setAttributes(data);
-      } catch (error) {
-        handleError(error, setError);
-      }
-    };
-
-    fetchAttributes();
-  }, [setAttributes]);
 
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
 
@@ -189,23 +171,6 @@ function AdminFloorEditor() {
 
           <Paper elevation={3} sx={{ p: 3, maxWidth: 500 }}>
             <Stack spacing={2}>
-              <Autocomplete
-                multiple
-                id="tags-standard"
-                options={attributes}
-                getOptionLabel={option => option}
-                renderInput={params => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    label="Table attributes"
-                  />
-                )}
-                onChange={(_, newValue) => {
-                  setNewAttributes(newValue);
-                }}
-              />
-
               <TextField
                 label="Capacity"
                 type="number"
@@ -214,6 +179,11 @@ function AdminFloorEditor() {
                 fullWidth
                 error={!!formErrors?.capacity}
                 helperText={formErrors?.capacity}
+              />
+
+              <TableAttributesSelect
+                onSelectAttribute={setNewAttributes}
+                label="Add table attributes"
               />
 
               <Stack direction="row" spacing={2}>

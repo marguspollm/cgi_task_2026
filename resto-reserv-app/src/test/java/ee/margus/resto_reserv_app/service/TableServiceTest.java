@@ -2,6 +2,7 @@ package ee.margus.resto_reserv_app.service;
 
 import ee.margus.resto_reserv_app.dto.TableDto;
 import ee.margus.resto_reserv_app.entity.RestaurantTable;
+import ee.margus.resto_reserv_app.repository.ReservationRepository;
 import ee.margus.resto_reserv_app.repository.TableRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.when;
 class TableServiceTest {
     @Mock
     private TableRepository tableRepository;
+    @Mock
+    private ReservationRepository reservationRepository;
     @InjectMocks
     private TableService tableService;
 
@@ -41,7 +44,7 @@ class TableServiceTest {
     }
 
     @Test
-    void givenNewAddedTable_whenSaveTables_thenReturnUpdatedTables(){
+    void givenNewAddedTable_whenSaveTables_thenReturnUpdatedTables() {
         RestaurantTable saved = new RestaurantTable();
         saved.setId(1L);
         TableDto dto = new TableDto(null, 2, Set.of(), 100, 100);
@@ -56,7 +59,7 @@ class TableServiceTest {
     }
 
     @Test
-    void givenUpdatedTable_whenSaveTables_thenReturnUpdatedTables(){
+    void givenUpdatedTable_whenSaveTables_thenReturnUpdatedTables() {
         RestaurantTable existing = new RestaurantTable();
         existing.setId(1L);
         TableDto dto = new TableDto(1L, 2, Set.of(), 100, 100);
@@ -73,7 +76,7 @@ class TableServiceTest {
     }
 
     @Test
-    void givenDeletedTable_whenSaveTables_thenDeleteTable(){
+    void givenDeletedTable_whenSaveTables_thenDeleteTable() {
         RestaurantTable dbTable1 = new RestaurantTable();
         RestaurantTable dbTable2 = new RestaurantTable();
         dbTable1.setId(1L);
@@ -83,15 +86,16 @@ class TableServiceTest {
         when(tableRepository.findAll()).thenReturn(List.of(dbTable1, dbTable2));
         when(tableRepository.findById(1L)).thenReturn(Optional.of(dbTable1));
         when(tableRepository.saveAll(any())).thenReturn(List.of(dbTable1));
+        when(reservationRepository.existsByRestaurantTable_IdAndDateGreaterThanEqual(any(), any())).thenReturn(false);
 
         tableService.saveTables(List.of(dto));
 
         assertEquals(2, dbTable1.getCapacity());
-        verify(tableRepository).deleteAll(List.of(dbTable2));
+        verify(tableRepository).delete(dbTable2);
     }
 
     @Test
-    void givenNotExistingTable_whenSaveTables_thenThrowException(){
+    void givenNotExistingTable_whenSaveTables_thenThrowException() {
         TableDto dto = new TableDto(1L, 2, Set.of(), 100, 100);
 
         when(tableRepository.findAll()).thenReturn(List.of());
@@ -110,11 +114,13 @@ class TableServiceTest {
 
         when(tableRepository.findAll()).thenReturn(List.of(dbTable1, dbTable2));
         when(tableRepository.saveAll(any())).thenReturn(List.of());
+        when(reservationRepository.existsByRestaurantTable_IdAndDateGreaterThanEqual(any(), any())).thenReturn(false);
 
         List<TableDto> result = tableService.saveTables(List.of());
 
         assertEquals(0, result.size());
-        verify(tableRepository).deleteAll(List.of(dbTable1, dbTable2));
+        verify(tableRepository).delete(dbTable1);
+        verify(tableRepository).delete(dbTable2);
     }
 
 }

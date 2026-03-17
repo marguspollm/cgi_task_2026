@@ -16,18 +16,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceTest {
     public static final LocalDate DATE = LocalDate.now().plusDays(2);
-    public static final LocalTime TIME = LocalTime.now().plusHours(2);
+    public static final LocalTime TIME = LocalTime.now().plusHours(2).truncatedTo(ChronoUnit.HOURS);
     @Mock
     private ReservationRepository reservationRepository;
     @Mock
@@ -81,42 +83,48 @@ class ReservationServiceTest {
     }
 
     @Test
-    void givenOverlapingReservationRequest_whenCreateReservation_thenThrowException() {
+    void givenOverlappingReservationRequest_whenCreateReservation_thenThrowException() {
         ReservationRequest request = getRequest();
 
         RestaurantTable restaurantTable = getTable(1L);
 
         Reservation exisitngReservation = getReservation(restaurantTable, DATE, TIME, request.partySize());
 
-        when(reservationRepository.findAll()).thenReturn(List.of(exisitngReservation));
+        when(reservationRepository
+            .findByDateAndTimeBetweenAndRestaurantTable_Id(any(), any(), any(), any()))
+            .thenReturn(List.of(exisitngReservation));
 
         Exception ex = assertThrows(RuntimeException.class, () -> service.create(request));
         assertEquals("Table is already booked for this time", ex.getMessage());
+        verify(reservationRepository)
+            .findByDateAndTimeBetweenAndRestaurantTable_Id(DATE, TIME.minusHours(2), TIME.plusHours(2), 1L);
     }
 
     @Test
     void givenCurrentDateOrTime_whenGetReservedTables_thenReturnCurrentReservedTableIds() {
+        LocalTime timeNow= LocalTime.now();
         RestaurantTable restaurantTable = getTable(1L);
-        Reservation reservation = getReservation(restaurantTable, LocalDate.now(), LocalTime.now(), 2);
+        Reservation reservation = getReservation(restaurantTable, LocalDate.now(), timeNow, 2);
 
-        when(reservationRepository.findAll()).thenReturn(List.of(reservation));
+        when(reservationRepository.findByDateAndTime(any(),any()))
+            .thenReturn(List.of(reservation));
 
-        assertEquals(List.of(1L), service.getReservedTables(LocalDate.now(), LocalTime.now()));
+        assertEquals(List.of(1L), service.getReservedTables(LocalDate.now(), timeNow));
+        verify(reservationRepository).findByDateAndTime(LocalDate.now(), timeNow);
     }
 
     @Test
     void givenDateAndTime_whenGetReservedTables_thenReturnGivenDateTimeReservedTableIds() {
-        RestaurantTable restaurantTable1 = getTable(1L);
-        RestaurantTable restaurantTable2 = getTable(2L);
-        RestaurantTable restaurantTable3 = getTable(3L);
-        Reservation reservation1 = getReservation(restaurantTable1, LocalDate.now(), LocalTime.now(), 2);
+        RestaurantTable restaurantTable1 = getTable(2L);
+        RestaurantTable restaurantTable2 = getTable(3L);
+        Reservation reservation1 = getReservation(restaurantTable1, DATE, TIME, 2);
         Reservation reservation2 = getReservation(restaurantTable2, DATE, TIME, 2);
-        Reservation reservation3 = getReservation(restaurantTable3, DATE, TIME, 2);
 
 
-        when(reservationRepository.findAll()).thenReturn(List.of(reservation1, reservation2, reservation3));
+        when(reservationRepository.findByDateAndTime(any(), any()))
+            .thenReturn(List.of(reservation1, reservation2));
 
         assertEquals(List.of(2L, 3L), service.getReservedTables(DATE, TIME));
-
+        verify(reservationRepository).findByDateAndTime(DATE, TIME);
     }
 }

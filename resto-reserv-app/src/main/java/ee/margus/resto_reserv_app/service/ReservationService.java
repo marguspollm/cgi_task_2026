@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static ee.margus.resto_reserv_app.util.Validator.validateRequest;
 
@@ -49,29 +48,31 @@ public class ReservationService {
     }
 
     public List<Long> getReservedTables(LocalDate date, LocalTime time) {
-        return getCurrentReservations(date, time)
+        return reservationRepository.findByDateAndTime(date, time)
+            .stream()
             .map(res -> res.getRestaurantTable().getId())
             .toList();
+    }
+
+    public Page<ReservationResponse> getFilteredReservations(ReservationFilters filters, Pageable pageable) {
+        Page<Reservation> reservations = reservationRepository
+            .findWithOptionalFilters(filters.date(),filters.time(), filters.customerName(), pageable);
+
+        return reservations.map(this::createReservationResponse);
     }
 
     private void checkAvailability(LocalDate date,
                                    LocalTime time,
                                    Long tableId) {
-        List<Reservation> conflicts = getCurrentReservations(date, time)
-            .filter(reservation -> reservation.getRestaurantTable().getId().equals(tableId))
-            .toList();
+        List<Reservation> conflicts = reservationRepository
+            .findByDateAndTimeBetweenAndRestaurantTable_Id(
+                date,
+                time.minusHours(2),
+                time.plusHours(2),
+                tableId
+            );
 
         if (!conflicts.isEmpty()) throw new RuntimeException("Table is already booked for this time");
-    }
-
-    private @NonNull Stream<Reservation> getCurrentReservations(LocalDate date, LocalTime time) {
-        return reservationRepository.findAll()
-            .stream()
-            .filter(reservation -> reservation.getDate().equals(date))
-            .filter(reservation ->
-                reservation.getTime().isBefore(time.plusHours(2))
-                    && reservation.getTime().plusHours(2).isAfter(time)
-            );
     }
 
     private @NonNull Reservation createReservation(ReservationRequest reservationRequest) {
@@ -102,12 +103,5 @@ public class ReservationService {
             reservation.getTime(),
             reservation.getPartySize()
         );
-    }
-
-    public Page<ReservationResponse> getFilteredReservations(ReservationFilters filters, Pageable pageable) {
-        Page<Reservation> reservations = reservationRepository
-            .findWithOptionalFilters(filters.date(),filters.time(), filters.customerName(), pageable);
-
-        return reservations.map(this::createReservationResponse);
     }
 }

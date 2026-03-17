@@ -29,6 +29,7 @@ import { ApiError } from "../models/ApiError";
 import type { ReservationResponse } from "../models/ReservationResponse";
 import ReservationConfirmationCard from "../components/ReservationConfirmationCard";
 import { createDate, formatDate } from "../utils/formatters";
+import type { TableAttribute } from "../models/TableAttribute";
 
 function ReservationPage() {
   const today = new Date().toISOString().split("T")[0];
@@ -38,7 +39,7 @@ function ReservationPage() {
     time: "",
     customerName: "",
     phoneNumber: "",
-    userPreferences: {},
+    userPreferences: [],
   };
   const [tables, setTables] = useState<Table[]>([]);
   const [bookedTables, setBookedTables] = useState<number[]>([]);
@@ -51,6 +52,7 @@ function ReservationPage() {
     null,
   );
   const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
+  const [userPreferences, setUserPreferences] = useState<TableAttribute[]>([]);
 
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -110,7 +112,7 @@ function ReservationPage() {
         partySize: reservationForm.partySize,
         date: reservationForm.date,
         time: reservationForm.time,
-        userPreferences: reservationForm.userPreferences,
+        userPreferences: userPreferences,
       };
 
       const recData = await getRecommendedTable(payload);
@@ -182,14 +184,8 @@ function ReservationPage() {
     }));
   };
 
-  const handleFormPreferenceChange = (name: string, value: unknown) => {
-    setReservationForm(prev => ({
-      ...prev,
-      userPreferences: {
-        ...prev.userPreferences,
-        [name]: value,
-      },
-    }));
+  const handleFormPreferenceChange = (value: TableAttribute[]) => {
+    setUserPreferences(value);
   };
 
   return (

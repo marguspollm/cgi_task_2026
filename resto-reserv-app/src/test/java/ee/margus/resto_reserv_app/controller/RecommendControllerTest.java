@@ -1,7 +1,6 @@
 package ee.margus.resto_reserv_app.controller;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
-import ee.margus.resto_reserv_app.dto.UserPreferences;
 import ee.margus.resto_reserv_app.service.RecommendService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -34,7 +34,7 @@ class RecommendControllerTest {
                 1,
                 LocalDate.now(),
                 LocalTime.now().plusHours(2),
-                new UserPreferences(false, false, false, false)
+                Set.of()
             );
         when(recommendService.getRecommendedTable(any(RecommendationRequest.class))).thenReturn(1L);
 
@@ -52,7 +52,7 @@ class RecommendControllerTest {
                 1,
                 LocalDate.now(),
                 LocalTime.now().plusHours(2),
-                new UserPreferences(false, false, false, false)
+                Set.of()
             );
         when(recommendService.getRecommendedTable(any(RecommendationRequest.class)))
             .thenThrow(new RuntimeException("No available tables to recommend!"));
@@ -70,7 +70,7 @@ class RecommendControllerTest {
                 1,
                 LocalDate.now().minusDays(2),
                 LocalTime.now().minusHours(2),
-                new UserPreferences(false, false, false, false)
+                Set.of()
             );
         when(recommendService.getRecommendedTable(any(RecommendationRequest.class)))
             .thenThrow(new RuntimeException("Reservation date cannot be in the past!"));

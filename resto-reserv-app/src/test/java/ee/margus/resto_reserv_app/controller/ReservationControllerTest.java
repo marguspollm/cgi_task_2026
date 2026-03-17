@@ -104,8 +104,8 @@ class ReservationControllerTest {
     void givenFilters_whenGetFilteredReservations_thenReturnsPage() throws Exception {
         ReservationResponse response = getReservationResponse();
 
-            Page < ReservationResponse > page =
-                new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1);
+        Page<ReservationResponse> page =
+            new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1);
 
         when(reservationService.getFilteredReservations(any(), any())).thenReturn(page);
 

@@ -1,8 +1,6 @@
 import {
   Button,
-  Checkbox,
   Divider,
-  FormControlLabel,
   Grid,
   Paper,
   Stack,
@@ -12,6 +10,8 @@ import {
 import type { FormErrors } from "../models/FormErrors";
 import type { ReservationFormState } from "../models/ReservationFormState";
 import InputTimeSlots from "./InputTimeSlots";
+import TableAttributesSelect from "./TableAttributesSelect";
+import type { TableAttribute } from "../models/TableAttribute";
 
 type ReservationFormProps = {
   form: ReservationFormState;
@@ -21,7 +21,7 @@ type ReservationFormProps = {
   checkAvailability: (e: React.SubmitEvent<HTMLFormElement>) => void;
   confirmReservation: () => void;
   formChange: (name: string, value: unknown) => void;
-  formPreferenceChange: (name: string, value: unknown) => void;
+  formPreferenceChange: (value: TableAttribute[]) => void;
 };
 
 function ReservationForm({
@@ -79,59 +79,12 @@ function ReservationForm({
           </Grid>
 
           <Divider />
-          <Typography>Table preferences:</Typography>
 
           <Grid container spacing={1}>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <FormControlLabel
-                label="Near window"
-                control={
-                  <Checkbox
-                    checked={form.userPreferences.isWindow || false}
-                    onChange={e =>
-                      formPreferenceChange("isWindow", e.target.checked)
-                    }
-                  />
-                }
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <FormControlLabel
-                label="Private"
-                control={
-                  <Checkbox
-                    checked={form.userPreferences.isPrivate || false}
-                    onChange={e =>
-                      formPreferenceChange("isPrivate", e.target.checked)
-                    }
-                  />
-                }
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <FormControlLabel
-                label="Near kids area"
-                control={
-                  <Checkbox
-                    checked={form.userPreferences.isNearKidsArea || false}
-                    onChange={e =>
-                      formPreferenceChange("isNearKidsArea", e.target.checked)
-                    }
-                  />
-                }
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <FormControlLabel
-                label="Easily accessible"
-                control={
-                  <Checkbox
-                    checked={form.userPreferences.isEasyAccess || false}
-                    onChange={e =>
-                      formPreferenceChange("isEasyAccess", e.target.checked)
-                    }
-                  />
-                }
+            <Grid size={{ xs: 12 }}>
+              <TableAttributesSelect
+                onSelectAttribute={formPreferenceChange}
+                label={"Table preferences"}
               />
             </Grid>
           </Grid>

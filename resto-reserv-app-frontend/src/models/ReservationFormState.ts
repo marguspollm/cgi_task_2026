@@ -1,4 +1,4 @@
-import type { UserPreferences } from "./UserPreferences";
+import type { TableAttribute } from "./TableAttribute";
 
 export type ReservationFormState = {
   customerName: string;
@@ -6,5 +6,5 @@ export type ReservationFormState = {
   partySize: number;
   date: string;
   time: string;
-  userPreferences: UserPreferences;
+  userPreferences: TableAttribute[];
 };

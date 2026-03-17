@@ -1,8 +1,8 @@
-import type { UserPreferences } from "./UserPreferences";
+import type { TableAttribute } from "./TableAttribute";
 
 export type RecommendRequest = {
   partySize: number;
   date: string;
   time: string;
-  userPreferences: UserPreferences;
+  userPreferences: TableAttribute[];
 };

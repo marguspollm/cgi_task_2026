@@ -1,7 +1,6 @@
 package ee.margus.resto_reserv_app.util;
 
 import ee.margus.resto_reserv_app.dto.RecommendationRequest;
-import ee.margus.resto_reserv_app.dto.UserPreferences;
 import ee.margus.resto_reserv_app.entity.RestaurantTable;
 import ee.margus.resto_reserv_app.model.RecommendedTableScore;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import java.util.Set;
 import static ee.margus.resto_reserv_app.model.TableAttribute.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class RestaurantTableScoreCalculatorTest {
+class TableScoreCalculatorTest {
 
     @Test
     void whenCapacityIsExactMatch_thenScoreIs10Points() {
@@ -72,7 +71,8 @@ class RestaurantTableScoreCalculatorTest {
                 4,
                 LocalDate.now(),
                 LocalTime.now(),
-                new UserPreferences(true, null, null, null));
+                Set.of(WINDOW)
+            );
 
         int score = TableScoreCalculator.score(rts, request);
 
@@ -88,7 +88,8 @@ class RestaurantTableScoreCalculatorTest {
                 4,
                 LocalDate.now(),
                 LocalTime.now(),
-                new UserPreferences(null, true, true, true));
+                Set.of(PRIVATE, EASY_ACCESSIBLE, NEAR_KIDS_AREA)
+            );
 
         int score = TableScoreCalculator.score(rts, request);
 
@@ -104,7 +105,7 @@ class RestaurantTableScoreCalculatorTest {
                 4,
                 LocalDate.now(),
                 LocalTime.now(),
-                new UserPreferences(false, false, false, false));
+                Set.of());
 
         int score = TableScoreCalculator.score(rts, request);
 
