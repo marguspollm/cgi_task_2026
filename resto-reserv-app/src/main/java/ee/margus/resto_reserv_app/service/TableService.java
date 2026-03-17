@@ -35,14 +35,14 @@ public class TableService {
 
         Set<Long> dtoIds = tables.stream()
             .map(TableDto::id)
-            .filter(id -> id != null && id >0)
+            .filter(id -> id != null && id > 0)
             .collect(Collectors.toSet());
 
         List<RestaurantTable> deleteTables = dbTables.stream()
             .filter(table -> !dtoIds.contains(table.getId()))
             .toList();
 
-        if(!deleteTables.isEmpty()){
+        if (!deleteTables.isEmpty()) {
             deleteTables(deleteTables);
         }
 
@@ -61,7 +61,7 @@ public class TableService {
         deleteTables.forEach(restaurantTable -> {
             boolean hasReservation = reservationRepository
                 .existsByRestaurantTable_IdAndDateGreaterThanEqual(restaurantTable.getId(), LocalDate.now());
-            if(hasReservation)
+            if (hasReservation)
                 throw new RuntimeException("Table is reserved and cannot be deleted - Id: " + restaurantTable.getId());
             tableRepository.delete(restaurantTable);
         });
@@ -70,9 +70,9 @@ public class TableService {
     private @NonNull RestaurantTable getRestaurantTable(TableDto tableDto) {
         RestaurantTable rt;
 
-        if (tableDto.id() != null){
+        if (tableDto.id() != null) {
             rt = tableRepository.findById(tableDto.id())
-                    .orElseThrow(() -> new RuntimeException("Table doesn't exist"));
+                .orElseThrow(() -> new RuntimeException("Table doesn't exist"));
         } else {
             rt = new RestaurantTable();
         }

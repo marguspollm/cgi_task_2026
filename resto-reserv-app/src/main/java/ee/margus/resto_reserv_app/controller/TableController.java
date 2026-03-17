@@ -22,7 +22,7 @@ public class TableController {
     }
 
     @PostMapping("tables")
-    public List<TableDto> saveTables(@RequestBody List<TableDto> tables){
+    public List<TableDto> saveTables(@RequestBody List<TableDto> tables) {
         return tableService.saveTables(tables);
     }
 

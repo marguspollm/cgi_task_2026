@@ -56,7 +56,7 @@ public class ReservationService {
 
     public Page<ReservationResponse> getFilteredReservations(ReservationFilters filters, Pageable pageable) {
         Page<Reservation> reservations = reservationRepository
-            .findWithOptionalFilters(filters.date(),filters.time(), filters.customerName(), pageable);
+            .findWithOptionalFilters(filters.date(), filters.time(), filters.customerName(), pageable);
 
         return reservations.map(this::createReservationResponse);
     }
