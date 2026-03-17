@@ -19,7 +19,7 @@ export const createReservation = (request: ReservationRequest) => {
 export const getReservations = (filters: ReservationFilters) => {
   const params = new URLSearchParams();
   params.append("page", filters.page.toString());
-  params.append("size", "20");
+  params.append("size", filters.size.toString());
   params.append("sort", "date,time,asc");
 
   if (filters.customerName) params.append("customerName", filters.customerName);

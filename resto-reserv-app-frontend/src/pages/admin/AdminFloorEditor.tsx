@@ -1,27 +1,38 @@
 import { useEffect, useState } from "react";
-import { getTables, saveTables } from "../../services/table.service";
+import {
+  getTableAttributes,
+  getTables,
+  saveTables,
+} from "../../services/table.service";
 import type { Table } from "../../models/Table";
 import type { MovabelTable } from "../../models/MovableTable";
 import {
-  Box,
   Stack,
   Paper,
   Typography,
   TextField,
   Button,
   Alert,
+  Container,
+  Autocomplete,
 } from "@mui/material";
 import { handleError } from "../../utils/errors";
+import Floor from "../../components/Floor";
+import { validateNewTable } from "../../utils/validations";
+import type { NewTableErrors } from "../../models/FormErrors";
+import type { TableAttribute } from "../../models/TableAttribute";
 
 function AdminFloorEditor() {
   const [tables, setTables] = useState<MovabelTable[]>([]);
+  const [originalTables, setOriginalTables] = useState<MovabelTable[]>([]);
+  const [attributes, setAttributes] = useState<TableAttribute[]>([]);
 
-  const [capacity, setCapacity] = useState(0);
-  const [attributes, setAttributes] = useState<string>("");
+  const [newCapacity, setNewCapacity] = useState(0);
+  const [newAttributes, setNewAttributes] = useState<TableAttribute[]>([]);
 
   const [loading, setLoading] = useState(false);
-  const [disableAdd, setDisableAdd] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<NewTableErrors | null>(null);
 
   function getMovableTables(tables: Table[]) {
     return tables.map(table => {
@@ -43,6 +54,7 @@ function AdminFloorEditor() {
         const data = await getTables();
         const movableTables = getMovableTables(data);
         setTables(movableTables);
+        setOriginalTables(movableTables);
       } catch (error) {
         handleError(error, setError);
       } finally {
@@ -51,6 +63,19 @@ function AdminFloorEditor() {
     };
     fetchTables();
   }, []);
+
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const data = await getTableAttributes();
+        setAttributes(data);
+      } catch (error) {
+        handleError(error, setError);
+      }
+    };
+
+    fetchAttributes();
+  }, [setAttributes]);
 
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
 
@@ -82,7 +107,16 @@ function AdminFloorEditor() {
 
   const handleAddTable = (e: React.MouseEvent) => {
     e.preventDefault();
-    const floorElement = document.querySelector(".floor");
+
+    const errors = validateNewTable(newCapacity);
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      setLoading(false);
+      return;
+    }
+
+    const floorElement = document.getElementById("floor");
     if (!floorElement) return;
     const containerRect = floorElement.getBoundingClientRect();
     const newX = containerRect.width / 2;
@@ -92,12 +126,13 @@ function AdminFloorEditor() {
       id: Date.now(),
       locationX: newX,
       locationY: newY,
-      capacity: 0,
-      attributes: [],
+      capacity: newCapacity,
+      attributes: newAttributes,
       new: true,
     };
     setTables(prev => [...prev, newTable]);
-    setDisableAdd(true);
+    setNewCapacity(0);
+    setNewAttributes([]);
   };
 
   const handleSave = async () => {
@@ -110,111 +145,92 @@ function AdminFloorEditor() {
         return { ...rest, id };
       });
       const data = await saveTables(payload);
-      setTables(getMovableTables(data));
+      const movableTables = getMovableTables(data);
+      setTables(movableTables);
+      setOriginalTables(movableTables);
     } catch (error) {
       handleError(error, setError);
+      setTables([...originalTables]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box p={3}>
-      {error && <Alert severity="warning">{error}</Alert>}
-      <Stack spacing={3}>
-        <Paper
-          elevation={3}
-          sx={{
-            position: "relative",
-            height: 400,
-            bgcolor: "#f5f5f5",
-            border: "2px dashed #ccc",
-            overflow: "hidden",
-          }}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
-        >
-          {tables.map(table => (
-            <Box
-              key={table.id}
-              draggable
-              onDragStart={e =>
-                table.id && e.dataTransfer.setData("id", table.id.toString())
-              }
-              sx={{
-                position: "absolute",
-                top: `${(table.locationY / 650) * 100}%`,
-                left: `${(table.locationX / 650) * 100}%`,
-                transform: "translate(-50%, -50%)",
-                bgcolor: "darkgreen",
-                color: "white",
-                px: 2,
-                py: 1,
-                borderRadius: 2,
-                cursor: "grab",
-                width: 40,
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="body2" fontWeight="bold">
-                {table.new ? "NEW" : `#${table.id}`}
-              </Typography>
-              <Typography variant="caption">Cap: {table.capacity}</Typography>
-              <Typography variant="caption" display="block">
-                {table.attributes}
-              </Typography>
-            </Box>
-          ))}
-        </Paper>
+    <>
+      {error && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
 
-        <Paper
-          elevation={1}
-          sx={{
-            p: 2,
-            textAlign: "center",
-            bgcolor: "#ffe6e6",
-            border: "2px dashed red",
-            color: "red",
-          }}
-          onDragOver={onDragOver}
-          onDrop={onDropDelete}
-        >
-          Delete Area (drag table here)
-        </Paper>
+      <Container sx={{ py: 3 }}>
+        <Stack spacing={3}>
+          <Typography sx={{ fontWeight: 700, textAlign: "center" }}>
+            Table Layout Editor
+          </Typography>
 
-        <Paper elevation={2} sx={{ p: 2 }}>
-          <Stack spacing={2}>
-            <TextField
-              label="Attributes"
-              value={attributes}
-              onChange={e => setAttributes(e.target.value)}
-              fullWidth
-            />
+          <Floor
+            mode="edit"
+            tables={tables}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onDropDelete={onDropDelete}
+          />
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            disabled={loading}
+            fullWidth
+            color="success"
+          >
+            Save
+          </Button>
 
-            <TextField
-              label="Capacity"
-              type="number"
-              value={capacity}
-              onChange={e => setCapacity(Number(e.target.value))}
-              fullWidth
-            />
+          <Paper elevation={3} sx={{ p: 3, maxWidth: 500 }}>
+            <Stack spacing={2}>
+              <Autocomplete
+                multiple
+                id="tags-standard"
+                options={attributes}
+                getOptionLabel={option => option}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    label="Table attributes"
+                  />
+                )}
+                onChange={(_, newValue) => {
+                  setNewAttributes(newValue);
+                }}
+              />
 
-            <Stack direction="row" spacing={2}>
-              <Button
-                variant="contained"
-                onClick={handleAddTable}
-                disabled={disableAdd}
-              >
-                Add Table
-              </Button>
-              <Button variant="outlined" onClick={handleSave} loading={loading}>
-                Save
-              </Button>
+              <TextField
+                label="Capacity"
+                type="number"
+                value={newCapacity}
+                onChange={e => setNewCapacity(Number(e.target.value))}
+                fullWidth
+                error={!!formErrors?.capacity}
+                helperText={formErrors?.capacity}
+              />
+
+              <Stack direction="row" spacing={2}>
+                <Button
+                  variant="contained"
+                  onClick={handleAddTable}
+                  fullWidth
+                  loading={loading}
+                >
+                  Add Table
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
-        </Paper>
-      </Stack>
-    </Box>
+          </Paper>
+        </Stack>
+      </Container>
+    </>
   );
 }
 

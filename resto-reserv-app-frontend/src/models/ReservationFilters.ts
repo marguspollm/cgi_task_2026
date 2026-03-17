@@ -3,4 +3,5 @@ export type ReservationFilters = {
   date?: string;
   time?: string;
   customerName?: string;
+  size: number;
 };

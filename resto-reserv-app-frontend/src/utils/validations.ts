@@ -1,4 +1,4 @@
-import type { FormErrors } from "../models/FormErrors";
+import type { FormErrors, NewTableErrors } from "../models/FormErrors";
 import type { ReservationFormState } from "../models/ReservationFormState";
 
 export const validateAvailability = (
@@ -24,5 +24,11 @@ export const validateReservation = (
   if (!form.customerName) errors.customerName = "Customer name required";
   if (!form.phoneNumber) errors.phoneNumber = "Phone number required";
 
+  return errors;
+};
+
+export const validateNewTable = (capacity: number): NewTableErrors => {
+  const errors: NewTableErrors = {};
+  if (capacity <= 0) errors.capacity = "Needs to be atleast 1";
   return errors;
 };

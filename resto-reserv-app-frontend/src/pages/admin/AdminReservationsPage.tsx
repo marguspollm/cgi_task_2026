@@ -25,6 +25,7 @@ function AdminReservationsPage() {
     date: "",
     time: "",
     customerName: "",
+    size: 25,
   });
   const [response, setResponse] =
     useState<Pageable<ReservationResponse> | null>(null);
@@ -53,7 +54,11 @@ function AdminReservationsPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setFilters(prev => ({ ...prev, customerName: nameInput, page: 0 }));
+      setFilters(prev => ({
+        ...prev,
+        customerName: nameInput.trim(),
+        page: 0,
+      }));
     }, 500);
 
     return () => clearTimeout(timer);
@@ -67,7 +72,7 @@ function AdminReservationsPage() {
     }
   };
 
-  const handlePageChange = (_: any, newPage: number) => {
+  const handlePageChange = (_: unknown, newPage: number) => {
     setFilters(prev => ({ ...prev, page: newPage }));
   };
 
@@ -155,7 +160,7 @@ function AdminReservationsPage() {
             count={response?.page.totalElements || 0}
             page={filters.page}
             onPageChange={handlePageChange}
-            rowsPerPage={25}
+            rowsPerPage={filters.size}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>

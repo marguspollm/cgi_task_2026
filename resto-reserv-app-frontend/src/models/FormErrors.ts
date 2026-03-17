@@ -6,3 +6,7 @@ export type FormErrors = {
   time?: string;
   partySize?: string;
 };
+
+export type NewTableErrors = {
+  capacity?: string;
+};

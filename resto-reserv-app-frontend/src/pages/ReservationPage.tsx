@@ -1,4 +1,11 @@
-import { Alert, Box, Container, Grid, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
 import Floor from "../components/Floor";
 import { useEffect, useState } from "react";
 import type { FormErrors } from "../models/FormErrors";
@@ -40,8 +47,10 @@ function ReservationPage() {
   const [confirmedReservation, setConfirmedReservation] =
     useState<ReservationResponse | null>(null);
 
-  const [recommededTable, setRecommendedTable] = useState<number | null>(null);
-  const [selectedTable, setSelectedTable] = useState<number | null>(null);
+  const [recommendedTableId, setRecommendedTableId] = useState<number | null>(
+    null,
+  );
+  const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
 
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -75,7 +84,7 @@ function ReservationPage() {
 
   const handleTableClick = (id: number) => {
     if (bookedTables.includes(id)) return;
-    setSelectedTable(id);
+    setSelectedTableId(id);
   };
 
   const handleCheckAvailability = async (
@@ -86,7 +95,7 @@ function ReservationPage() {
     setLoading(true);
     setError(null);
     setFormErrors({});
-    setSelectedTable(null);
+    setSelectedTableId(null);
 
     const errors = validateAvailability(reservationForm);
 
@@ -109,7 +118,7 @@ function ReservationPage() {
         reservationForm.date,
         reservationForm.time,
       );
-      setRecommendedTable(recData);
+      setRecommendedTableId(recData);
       setBookedTables(bookedData);
     } catch (error) {
       handleError(error, setError);
@@ -119,12 +128,12 @@ function ReservationPage() {
   };
 
   const handleConfirmReservation = async () => {
-    if (!selectedTable || loading) return;
+    if (!selectedTableId || loading) return;
     setLoading(true);
     setError(null);
     setFormErrors({});
 
-    const errors = validateReservation(reservationForm, selectedTable);
+    const errors = validateReservation(reservationForm, selectedTableId);
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -136,7 +145,7 @@ function ReservationPage() {
       const payload: ReservationRequest = {
         customerName: reservationForm.customerName,
         phoneNumber: reservationForm.phoneNumber,
-        tableId: selectedTable,
+        tableId: selectedTableId,
         date: reservationForm.date,
         time: reservationForm.time,
         partySize: reservationForm.partySize,
@@ -150,8 +159,8 @@ function ReservationPage() {
       setConfirmedReservation(confirmedReservation);
       setSuccessOpen(true);
       setBookedTables(bookedData);
-      setSelectedTable(null);
-      setRecommendedTable(null);
+      setSelectedTableId(null);
+      setRecommendedTableId(null);
       setReservationForm(defaultForm);
     } catch (error) {
       handleError(error, setError);
@@ -205,13 +214,20 @@ function ReservationPage() {
                   : formatDate(new Date())}
               </Typography>
 
-              <Floor
-                tables={tables}
-                booked={bookedTables}
-                setSelectedTable={handleTableClick}
-                selectedTable={selectedTable}
-                recommendedTable={recommededTable}
-              />
+              {loading ? (
+                <>
+                  <CircularProgress size="3rem" />
+                </>
+              ) : (
+                <Floor
+                  mode="view"
+                  tables={tables}
+                  booked={bookedTables}
+                  selectedTableId={selectedTableId}
+                  setSelectedTable={handleTableClick}
+                  recommendedTableId={recommendedTableId}
+                />
+              )}
             </Box>
           </Grid>
 
@@ -222,7 +238,7 @@ function ReservationPage() {
                 checkAvailability={handleCheckAvailability}
                 formChange={handleFormChange}
                 formPreferenceChange={handleFormPreferenceChange}
-                selectedTable={selectedTable}
+                selectedTableId={selectedTableId}
                 loading={loading}
                 confirmReservation={handleConfirmReservation}
                 errors={formErrors}

@@ -15,7 +15,7 @@ import InputTimeSlots from "./InputTimeSlots";
 
 type ReservationFormProps = {
   form: ReservationFormState;
-  selectedTable: number | null;
+  selectedTableId: number | null;
   errors: FormErrors;
   loading: boolean;
   checkAvailability: (e: React.SubmitEvent<HTMLFormElement>) => void;
@@ -26,7 +26,7 @@ type ReservationFormProps = {
 
 function ReservationForm({
   form,
-  selectedTable,
+  selectedTableId,
   errors,
   loading,
   checkAvailability,
@@ -140,7 +140,7 @@ function ReservationForm({
             Check availability
           </Button>
 
-          {selectedTable && (
+          {selectedTableId && (
             <>
               <Divider />
               <Typography>Customer information:</Typography>
