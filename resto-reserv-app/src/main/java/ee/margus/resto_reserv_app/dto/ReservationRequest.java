@@ -15,16 +15,14 @@ public record ReservationRequest(
     @NotBlank(message = "Phone number is required!")
     @Pattern(
         regexp = "^\\+?[0-9\\- ]{7,20}$",
-        message = "Invalid phone number"
+        message = "Invalid phone number!"
     )
     String phoneNumber,
     @NotNull
     Long tableId,
     @NotNull(message = "Date is required!")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate date,
     @NotNull(message = "Time is required!")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     LocalTime time,
     @Min(1)
     Integer partySize

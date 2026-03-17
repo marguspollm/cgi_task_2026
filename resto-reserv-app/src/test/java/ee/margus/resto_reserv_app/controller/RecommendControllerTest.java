@@ -17,8 +17,7 @@ import java.time.LocalTime;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RecommendController.class)
 class RecommendControllerTest {
@@ -80,5 +79,24 @@ class RecommendControllerTest {
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void givenInvalidRequestParam_whenSaveTables_thenReturnsError() throws Exception {
+        String json = """
+                {
+                    "partySize": 0,
+                    "date": null,
+                    "time": null
+                }
+            """;
+
+        mockMvc.perform(post("/recommended-table")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.errors.date").value("Date is required!"))
+            .andExpect(jsonPath("$.errors.time").value("Time is required!"))
+            .andExpect(jsonPath("$.errors.partySize").value("must be greater than or equal to 1"));
     }
 }
