@@ -1,9 +1,9 @@
 import type { TableAttribute } from "./TableAttribute";
 
 export type Table = {
-  id: number;
+  id?: number;
   capacity: number;
-  attribute: TableAttribute[];
+  attributes: TableAttribute[];
   locationX: number;
   locationY: number;
 };

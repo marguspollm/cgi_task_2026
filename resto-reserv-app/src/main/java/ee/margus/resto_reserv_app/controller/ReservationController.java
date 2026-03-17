@@ -34,10 +34,10 @@ public class ReservationController {
     }
 
     @GetMapping("reservations")
-    public Page<ReservationResponse> getAllReservations(
+    public Page<ReservationResponse> getFilteredReservations(
         ReservationFilters reservationFilters,
         Pageable pageable) {
-        return service.getAllReservations(reservationFilters, pageable);
+        return service.getFilteredReservations(reservationFilters, pageable);
     }
 
 }

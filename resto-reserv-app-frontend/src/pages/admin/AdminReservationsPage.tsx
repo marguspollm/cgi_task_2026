@@ -155,7 +155,7 @@ function AdminReservationsPage() {
             count={response?.page.totalElements || 0}
             page={filters.page}
             onPageChange={handlePageChange}
-            rowsPerPage={20}
+            rowsPerPage={25}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>

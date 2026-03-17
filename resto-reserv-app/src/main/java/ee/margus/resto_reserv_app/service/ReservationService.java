@@ -104,7 +104,7 @@ public class ReservationService {
         );
     }
 
-    public Page<ReservationResponse> getAllReservations(ReservationFilters filters, Pageable pageable) {
+    public Page<ReservationResponse> getFilteredReservations(ReservationFilters filters, Pageable pageable) {
         Page<Reservation> reservations = reservationRepository
             .findWithOptionalFilters(filters.date(),filters.time(), filters.customerName(), pageable);
 

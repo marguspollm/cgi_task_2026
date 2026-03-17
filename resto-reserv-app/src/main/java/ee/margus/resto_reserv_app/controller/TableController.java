@@ -4,6 +4,8 @@ import ee.margus.resto_reserv_app.dto.TableDto;
 import ee.margus.resto_reserv_app.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -16,6 +18,11 @@ public class TableController {
     @GetMapping("tables")
     public List<TableDto> getAllTables() {
         return tableService.getAllTables();
+    }
+
+    @PostMapping("tables")
+    public List<TableDto> saveTables(@RequestBody List<TableDto> tables){
+        return tableService.saveTables(tables);
     }
 
 }

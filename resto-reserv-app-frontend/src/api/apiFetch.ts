@@ -6,7 +6,7 @@ export async function apiFetch<T>(
   endpoint: string,
   options: {
     method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-    body?: Record<string, unknown>;
+    body?: unknown;
     headers?: Record<string, string>;
   } = {},
 ): Promise<T> {
