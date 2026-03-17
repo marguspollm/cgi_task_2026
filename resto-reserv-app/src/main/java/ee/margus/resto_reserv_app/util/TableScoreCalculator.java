@@ -15,7 +15,7 @@ public class TableScoreCalculator {
         int score = 0;
         UserPreferences userPreferences = request.userPreferences();
         RestaurantTable restaurantTable = ts.getRestaurantTable();
-        Set<TableAttribute> attr = restaurantTable.getAttribute();
+        Set<TableAttribute> attr = restaurantTable.getAttributes();
 
         if (restaurantTable.getCapacity() == request.partySize()) {
             score += 10;

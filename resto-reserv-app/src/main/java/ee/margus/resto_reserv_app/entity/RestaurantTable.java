@@ -27,7 +27,7 @@ public class RestaurantTable {
         name = "table_attributes",
         joinColumns = @JoinColumn(name = "table_id")
     )
-    private Set<TableAttribute> attribute;
+    private Set<TableAttribute> attributes;
 
     private int locationX;
     private int locationY;
@@ -37,7 +37,7 @@ public class RestaurantTable {
         return "Table{" +
             "id=" + id +
             ", capacity=" + capacity +
-            ", attribute=" + attribute +
+            ", attributes=" + attributes +
             ", locationX=" + locationX +
             ", locationY=" + locationY +
             '}';

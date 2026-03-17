@@ -7,7 +7,7 @@ import java.util.Set;
 public record TableDto(
     Long id,
     int capacity,
-    Set<TableAttribute> attribute,
+    Set<TableAttribute> attributes,
     int locationX,
     int locationY) {
 }

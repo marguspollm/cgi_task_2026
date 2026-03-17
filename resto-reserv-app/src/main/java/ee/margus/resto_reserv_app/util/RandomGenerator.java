@@ -58,7 +58,7 @@ public class RandomGenerator {
 
                 RestaurantTable rt = new RestaurantTable();
                 rt.setCapacity(random.nextInt(1, 10));
-                rt.setAttribute(attrs);
+                rt.setAttributes(attrs);
                 rt.setLocationX(100 + col * spacingX);
                 rt.setLocationY(100 + row * spacingY);
 
