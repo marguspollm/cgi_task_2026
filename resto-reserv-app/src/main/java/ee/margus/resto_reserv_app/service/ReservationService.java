@@ -34,7 +34,7 @@ public class ReservationService {
     private TableRepository tableRepository;
 
     /**
-     * Creates a new reservation in the system
+     * Creates a new reservation
      * 
      * @param reservationRequest The reservation details including date, time, party
      *                           size, customer info, and table ID
@@ -68,7 +68,7 @@ public class ReservationService {
      *         time
      */
     public List<Long> getReservedTables(LocalDate date, LocalTime time) {
-        return reservationRepository.findByDateAndTime(date, time)
+        return reservationRepository.findByDateAndTimeBetween(date, time.minusHours(2), time.plusHours(2))
                 .stream()
                 .map(res -> res.getRestaurantTable().getId())
                 .toList();

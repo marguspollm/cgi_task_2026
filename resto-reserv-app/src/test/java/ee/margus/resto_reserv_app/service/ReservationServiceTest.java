@@ -108,11 +108,11 @@ class ReservationServiceTest {
         RestaurantTable restaurantTable = getTable(1L);
         Reservation reservation = getReservation(restaurantTable, LocalDate.now(), timeNow, 2);
 
-        when(reservationRepository.findByDateAndTime(any(), any()))
+        when(reservationRepository.findByDateAndTimeBetween(any(), any(), any()))
             .thenReturn(List.of(reservation));
 
         assertEquals(List.of(1L), service.getReservedTables(LocalDate.now(), timeNow));
-        verify(reservationRepository).findByDateAndTime(LocalDate.now(), timeNow);
+        verify(reservationRepository).findByDateAndTimeBetween(LocalDate.now(), timeNow.minusHours(2), timeNow.plusHours(2));
     }
 
     @Test
@@ -123,10 +123,10 @@ class ReservationServiceTest {
         Reservation reservation2 = getReservation(restaurantTable2, DATE, TIME, 2);
 
 
-        when(reservationRepository.findByDateAndTime(any(), any()))
+        when(reservationRepository.findByDateAndTimeBetween(any(), any(), any()))
             .thenReturn(List.of(reservation1, reservation2));
 
         assertEquals(List.of(2L, 3L), service.getReservedTables(DATE, TIME));
-        verify(reservationRepository).findByDateAndTime(DATE, TIME);
+        verify(reservationRepository).findByDateAndTimeBetween(DATE, TIME.minusHours(2), TIME.plusHours(2));
     }
 }
