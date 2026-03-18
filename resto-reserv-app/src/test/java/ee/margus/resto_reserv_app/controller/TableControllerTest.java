@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,5 +83,33 @@ class TableControllerTest {
         mockMvc.perform(get("/table-attributes"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    void givenTableIdWithReservations_whenDeleteTable_thenReturnError() throws Exception {
+        doThrow(new RuntimeException("Table is reserved and cannot be deleted - Id: 1"))
+            .when(tableService)
+            .delete(anyLong());
+
+        mockMvc.perform(delete("/tables")
+                .param("id", "1"))
+            .andExpect(status().is5xxServerError())
+            .andExpect(jsonPath("$.message").value("Table is reserved and cannot be deleted - Id: 1"));
+    }
+
+    @Test
+    void givenTableIdWithoutReservations_whenDeleteTable_thenDeleteTable() throws Exception {
+        doNothing().when(tableService).delete(anyLong());
+
+        mockMvc.perform(delete("/tables")
+                .param("id", "1"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void givenNoId_whenDeleteTable_thenReturnError() throws Exception {
+
+        mockMvc.perform(delete("/tables"))
+            .andExpect(status().isInternalServerError());
     }
 }

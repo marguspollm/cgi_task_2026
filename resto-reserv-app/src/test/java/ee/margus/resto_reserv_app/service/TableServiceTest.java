@@ -18,8 +18,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
@@ -65,7 +64,7 @@ class TableServiceTest {
         TableDto dto = new TableDto(1L, 2, Set.of(), 100, 100);
 
         when(tableRepository.findAll()).thenReturn(List.of(existing));
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(tableRepository.findById(eq(1L))).thenReturn(Optional.of(existing));
         when(tableRepository.saveAll(any())).thenReturn(List.of(existing));
 
         tableService.saveTables(List.of(dto));
@@ -84,14 +83,14 @@ class TableServiceTest {
         TableDto dto = new TableDto(1L, 2, Set.of(), 100, 100);
 
         when(tableRepository.findAll()).thenReturn(List.of(dbTable1, dbTable2));
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(dbTable1));
+        when(tableRepository.findById(eq(1L))).thenReturn(Optional.of(dbTable1));
         when(tableRepository.saveAll(any())).thenReturn(List.of(dbTable1));
         when(reservationRepository.existsByRestaurantTable_IdAndDateGreaterThanEqual(any(), any())).thenReturn(false);
 
         tableService.saveTables(List.of(dto));
 
         assertEquals(2, dbTable1.getCapacity());
-        verify(tableRepository).delete(dbTable2);
+        verify(tableRepository).deleteById(dbTable2.getId());
     }
 
     @Test
@@ -99,7 +98,7 @@ class TableServiceTest {
         TableDto dto = new TableDto(1L, 2, Set.of(), 100, 100);
 
         when(tableRepository.findAll()).thenReturn(List.of());
-        when(tableRepository.findById(1L)).thenReturn(Optional.empty());
+        when(tableRepository.findById(eq(1L))).thenReturn(Optional.empty());
 
         Exception ex = assertThrows(RuntimeException.class, () -> tableService.saveTables(List.of(dto)));
         assertEquals("Table doesn't exist", ex.getMessage());
@@ -119,8 +118,28 @@ class TableServiceTest {
         List<TableDto> result = tableService.saveTables(List.of());
 
         assertEquals(0, result.size());
-        verify(tableRepository).delete(dbTable1);
-        verify(tableRepository).delete(dbTable2);
+        verify(tableRepository).deleteById(dbTable1.getId());
+        verify(tableRepository).deleteById(dbTable2.getId());
     }
 
+    @Test
+    void givenTableWithoutReservations_whenDeleteTable_thenDeleteTable() {
+
+        when(reservationRepository.existsByRestaurantTable_IdAndDateGreaterThanEqual(eq(1L), any()))
+            .thenReturn(false);
+
+        tableService.delete(1L);
+        verify(tableRepository).deleteById(1L);
+    }
+
+    @Test
+    void givenTableWithReservation_whenDeleteTable_thenDeleteTable() {
+
+        when(reservationRepository.existsByRestaurantTable_IdAndDateGreaterThanEqual(eq(1L), any()))
+            .thenReturn(true);
+
+        Exception ex = assertThrows(RuntimeException.class, () -> tableService.delete(1L));
+        assertEquals("Table is reserved and cannot be deleted - Id: 1", ex.getMessage());
+        verify(tableRepository, never()).deleteById(1L);
+    }
 }

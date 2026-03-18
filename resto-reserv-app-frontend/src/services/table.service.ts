@@ -13,3 +13,11 @@ export const saveTables = (payload: Table[]) => {
 export const getTableAttributes = () => {
   return apiFetch<TableAttribute[]>("table-attributes");
 };
+
+export const deleteTable = (id: number) => {
+  const params = new URLSearchParams();
+  if (id) {
+    params.append("id", id.toString());
+  }
+  return apiFetch<boolean>(`tables?${params}`, { method: "DELETE" });
+};

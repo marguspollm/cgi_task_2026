@@ -14,7 +14,9 @@ public class AppConfig {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             public void addCorsMappings(@NonNull CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:5173");
+                registry.addMapping("/**")
+                    .allowedOrigins("http://localhost:5173")
+                    .allowedMethods("GET", "POST", "DELETE", "OPTIONS");
             }
         };
     }

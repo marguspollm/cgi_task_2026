@@ -92,11 +92,26 @@ function AdminFloorEditor() {
     );
   };
 
-  const onDropDelete = (e: React.DragEvent<HTMLDivElement>) => {
+  const onDropDelete = async (e: React.DragEvent<HTMLDivElement>) => {
     if (!e.dataTransfer) return;
 
-    const id = parseInt(e.dataTransfer.getData("id"));
-    setTables(prev => prev.filter(t => t.id !== id));
+    const { id, isNew } = JSON.parse(e.dataTransfer.getData("table"));
+    console.log(id, isNew);
+    if (!id) return;
+    if (isNew) {
+      setTables(prev => prev.filter(t => t.id !== id));
+      return;
+    }
+    try {
+      setLoading(true);
+      await deleteTable(id);
+      setTables(prev => prev.filter(t => t.id !== id));
+      showSnackbar(`Deleted table with id - ${id}`);
+    } catch (error) {
+      handleError(error, setError);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAddTable = (e: React.MouseEvent) => {

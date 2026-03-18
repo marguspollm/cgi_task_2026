@@ -57,14 +57,9 @@ public class TableService {
             .toList();
     }
 
+    @Transactional
     private void deleteTables(List<RestaurantTable> deleteTables) {
-        deleteTables.forEach(restaurantTable -> {
-            boolean hasReservation = reservationRepository
-                .existsByRestaurantTable_IdAndDateGreaterThanEqual(restaurantTable.getId(), LocalDate.now());
-            if (hasReservation)
-                throw new RuntimeException("Table is reserved and cannot be deleted - Id: " + restaurantTable.getId());
-            tableRepository.delete(restaurantTable);
-        });
+        deleteTables.forEach(restaurantTable -> delete(restaurantTable.getId()));
     }
 
     private @NonNull RestaurantTable getRestaurantTable(TableDto tableDto) {
@@ -93,5 +88,14 @@ public class TableService {
             table.getLocationX(),
             table.getLocationY()
         );
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        boolean hasReservation = reservationRepository
+            .existsByRestaurantTable_IdAndDateGreaterThanEqual(id, LocalDate.now());
+        if (hasReservation)
+            throw new RuntimeException("Table is reserved and cannot be deleted - Id: " + id);
+        tableRepository.deleteById(id);
     }
 }
