@@ -10,7 +10,6 @@ import ee.margus.resto_reserv_app.util.RandomGenerator;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,6 @@ import java.util.List;
 
 // Populate repository with random data for a demo - help from Gemini AI
 @Component
-@Profile("!test")
 public class DemoDataLoader implements CommandLineRunner {
     @Autowired
     private ReservationRepository reservationRepository;

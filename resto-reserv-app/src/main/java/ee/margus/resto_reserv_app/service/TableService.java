@@ -24,7 +24,7 @@ public class TableService {
     private ReservationRepository reservationRepository;
 
     /**
-     * Get all restaurant tables from the database
+     * Gets all restaurant tables from the database
      * 
      * @return List of all tables with their details
      */

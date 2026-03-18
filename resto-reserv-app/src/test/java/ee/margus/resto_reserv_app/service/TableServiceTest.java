@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -123,7 +122,7 @@ class TableServiceTest {
     void givenTableWithoutReservations_whenDeleteTable_thenDeleteTable() {
 
         when(reservationRepository.existsByRestaurantTable_IdAndDateGreaterThanEqual(eq(1L), any()))
-            .thenReturn(false);
+                .thenReturn(false);
 
         tableService.delete(1L);
         verify(tableRepository).deleteById(1L);
@@ -133,7 +132,7 @@ class TableServiceTest {
     void givenTableWithReservation_whenDeleteTable_thenDeleteTable() {
 
         when(reservationRepository.existsByRestaurantTable_IdAndDateGreaterThanEqual(eq(1L), any()))
-            .thenReturn(true);
+                .thenReturn(true);
 
         Exception ex = assertThrows(RuntimeException.class, () -> tableService.delete(1L));
         assertEquals("Table is reserved and cannot be deleted - Id: 1", ex.getMessage());

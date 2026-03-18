@@ -48,6 +48,7 @@ function ReservationConfirmationCard({
     fetchMeals();
   }, [confirmedReservation]);
 
+  // Simulates ordering, doesn't really save the response at this moment
   const handlePreOrder = (id: number) => {
     setRecommendedMeals(prev => prev.filter(meal => meal.id !== id));
     setSnackbarOpen(true);
