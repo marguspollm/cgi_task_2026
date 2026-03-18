@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   CircularProgress,
+  Grid,
   Paper,
   Table,
   TableBody,
@@ -101,37 +102,41 @@ function AdminReservationsPage() {
 
       <Box
         sx={{
-          display: "flex",
-          gap: 2,
           mb: 3,
-          flexWrap: "wrap",
         }}
       >
-        <TextField
-          label="Date"
-          type="date"
-          value={filters.date}
-          onChange={e => handleInputChange("date", e.target.value)}
-          slotProps={{
-            inputLabel: { shrink: true },
-          }}
-        />
-
-        <TimeSelect
-          value={filters.time}
-          onChange={handleInputChange}
-          fullWidth={false}
-        />
-
-        <TextField
-          label="Name"
-          type="customerName"
-          value={nameInput}
-          onChange={e => handleInputChange("customerName", e.target.value)}
-          slotProps={{
-            inputLabel: { shrink: true },
-          }}
-        />
+        <Grid container spacing={2} alignItems="left">
+          <Grid size={{ xs: 12, sm: "auto" }}>
+            <TextField
+              label="Date"
+              type="date"
+              value={filters.date}
+              onChange={e => handleInputChange("date", e.target.value)}
+              slotProps={{
+                inputLabel: { shrink: true },
+              }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <TimeSelect
+              value={filters.time}
+              onChange={handleInputChange}
+              fullWidth={true}
+              mode={"admin"}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <TextField
+              label="Name"
+              type="customerName"
+              value={nameInput}
+              onChange={e => handleInputChange("customerName", e.target.value)}
+              slotProps={{
+                inputLabel: { shrink: true },
+              }}
+            />
+          </Grid>
+        </Grid>
       </Box>
       {loading ? (
         <>

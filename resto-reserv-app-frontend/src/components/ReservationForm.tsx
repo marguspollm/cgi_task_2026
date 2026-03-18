@@ -59,6 +59,7 @@ function ReservationForm({
 
             <Grid size={{ xs: 12, md: 5 }}>
               <TimeSelect
+                mode={"user"}
                 value={form.time}
                 onChange={formChange}
                 errors={errors}
