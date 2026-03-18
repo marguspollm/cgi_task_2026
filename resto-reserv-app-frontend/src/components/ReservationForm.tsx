@@ -11,7 +11,7 @@ import type { FormErrors } from "../models/FormErrors";
 import type { ReservationFormState } from "../models/ReservationFormState";
 import TableAttributesSelect from "./TableAttributesSelect";
 import type { TableAttribute } from "../models/TableAttribute";
-import TimeSelect from "./InputTimeSlots";
+import TimeSelect from "./TimeSelect";
 
 type ReservationFormProps = {
   form: ReservationFormState;

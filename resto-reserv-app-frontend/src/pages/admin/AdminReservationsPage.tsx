@@ -19,7 +19,7 @@ import type { ReservationFilters } from "../../models/ReservationFilters";
 import { getReservations } from "../../services/reservation.service";
 import { handleError } from "../../utils/errors";
 import type { Pageable } from "../../models/Pageable";
-import TimeSelect from "../../components/InputTimeSlots";
+import TimeSelect from "../../components/TimeSelect";
 
 /**
  * Admin page for Reservations
