@@ -19,7 +19,7 @@ type ReservationFormProps = {
   errors: FormErrors;
   loading: boolean;
   checkAvailability: (e: React.SubmitEvent<HTMLFormElement>) => void;
-  confirmReservation: () => void;
+  createReservation: () => void;
   formChange: (name: string, value: unknown) => void;
   formPreferenceChange: (value: TableAttribute[]) => void;
   tablePreferences: TableAttribute[];
@@ -31,7 +31,7 @@ function ReservationForm({
   errors,
   loading,
   checkAvailability,
-  confirmReservation,
+  createReservation,
   formChange,
   formPreferenceChange,
   tablePreferences,
@@ -124,13 +124,13 @@ function ReservationForm({
                 </Grid>
               </Grid>
               <Button
-                onClick={confirmReservation}
+                onClick={createReservation}
                 variant="contained"
                 color="success"
                 loading={loading}
                 disabled={!form.customerName && !form.phoneNumber}
               >
-                Confirm reservation
+                Create reservation
               </Button>
             </>
           )}

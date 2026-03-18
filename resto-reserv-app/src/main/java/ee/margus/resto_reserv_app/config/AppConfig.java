@@ -10,13 +10,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class AppConfig {
 
+    // Configure CORS to allow defined frontend fetches
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:5173")
-                    .allowedMethods("GET", "POST", "DELETE", "OPTIONS");
+                        .allowedOrigins("http://localhost:5173")
+                        .allowedMethods("GET", "POST", "DELETE", "OPTIONS");
             }
         };
     }

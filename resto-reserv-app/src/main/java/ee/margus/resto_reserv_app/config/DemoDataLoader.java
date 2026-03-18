@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-// Gemini answer on how to populate repository with random data for a demo
+// Populate repository with random data for a demo - help from Gemini AI
 @Component
 @Profile("!test")
 public class DemoDataLoader implements CommandLineRunner {
@@ -27,10 +27,9 @@ public class DemoDataLoader implements CommandLineRunner {
     @Autowired
     private CustomerRepository customerRepository;
 
-
     @Override
     @Transactional
-    public void run(String @NonNull ... args) {
+    public void run(String @NonNull... args) {
         Customer customer = new Customer();
         customer.setName("Test Tester");
         customer.setPhoneNumber("555 55555");

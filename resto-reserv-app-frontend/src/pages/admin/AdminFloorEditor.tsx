@@ -23,6 +23,11 @@ import type { NewTableErrors } from "../../models/FormErrors";
 import type { TableAttribute } from "../../models/TableAttribute";
 import TableAttributesSelect from "../../components/TableAttributesSelect";
 
+/**
+ * Admin page for Tables arrangement on floor plan
+ *
+ * Admin page for rearranging tabel on restaurant floor, creating new tables and deleting tables
+ */
 function AdminFloorEditor() {
   const [tables, setTables] = useState<MovabelTable[]>([]);
   const [originalTables, setOriginalTables] = useState<MovabelTable[]>([]);
@@ -40,7 +45,13 @@ function AdminFloorEditor() {
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<NewTableErrors | null>(null);
 
-  function getMovableTables(tables: Table[]) {
+  /**
+   * Creates new array of all existing tables tha can be moved on the floor
+   *
+   * @param tables Array of tables from backend
+   * @returns Array of tables with extra paramaeters to make them movabel on floor
+   */
+  function getMovableTables(tables: Table[]): MovabelTable[] {
     return tables.map(table => {
       return {
         id: table.id,
@@ -72,6 +83,7 @@ function AdminFloorEditor() {
 
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
 
+  // Handle drag of given table by updating state
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
     if (!e.dataTransfer) return;
     setSaveDisabled(false);
@@ -92,20 +104,26 @@ function AdminFloorEditor() {
     );
   };
 
+  // Handle the table dragged to delete zone and its deletion
   const onDropDelete = async (e: React.DragEvent<HTMLDivElement>) => {
     if (!e.dataTransfer) return;
 
     const { id, isNew } = JSON.parse(e.dataTransfer.getData("table"));
-    console.log(id, isNew);
+
     if (!id) return;
+    // If table is created and not saved in database then delete from state
     if (isNew) {
       setTables(prev => prev.filter(t => t.id !== id));
       return;
     }
+
+    // If table is in database, then send delete request
     try {
       setLoading(true);
+
       await deleteTable(id);
       setTables(prev => prev.filter(t => t.id !== id));
+
       showSnackbar(`Deleted table with id - ${id}`);
     } catch (error) {
       handleError(error, setError);
@@ -114,9 +132,11 @@ function AdminFloorEditor() {
     }
   };
 
+  // Handles adding a new table with a temporary id and new parameter
   const handleAddTable = (e: React.MouseEvent) => {
     e.preventDefault();
 
+    // Validate the ded table has capacity > 0
     setFormErrors(null);
     const errors = validateNewTable(newCapacity);
 
@@ -131,7 +151,9 @@ function AdminFloorEditor() {
 
     setSaveDisabled(false);
 
+    // Create new table in the middle of the floor
     const containerRect = floorElement.getBoundingClientRect();
+
     const newX = containerRect.width / 2;
     const newY = containerRect.height / 2;
 
@@ -143,28 +165,35 @@ function AdminFloorEditor() {
       attributes: newAttributes,
       new: true,
     };
+
     setTables(prev => [...prev, newTable]);
+
     setNewCapacity(0);
     setNewAttributes([]);
   };
 
+  // Handle the save of new and rearranged floor tables
   const handleSave = async () => {
     try {
       setLoading(true);
       setError(null);
+
       const payload: Table[] = tables.map(table => {
         const { new: isNew, id, ...rest } = table;
         if (isNew) return { ...rest };
         return { ...rest, id };
       });
+
       const data = await saveTables(payload);
       const movableTables = getMovableTables(data);
       setTables(movableTables);
       setOriginalTables(movableTables);
+
       setNewAttributes([]);
       showSnackbar("Tables saved!");
     } catch (error) {
       handleError(error, setError);
+
       setTables([...originalTables]);
       setSaveDisabled(true);
     } finally {

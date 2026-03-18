@@ -20,6 +20,12 @@ import { handleError } from "../../utils/errors";
 import type { Pageable } from "../../models/Pageable";
 import TimeSelect from "../../components/InputTimeSlots";
 
+/**
+ * Admin page for Reservations
+ *
+ * Admin page for filtering reservations by customer name, date or time.
+ * Displays the reservations table with filters
+ */
 function AdminReservationsPage() {
   const [filters, setFilters] = useState<ReservationFilters>({
     page: 0,
@@ -31,7 +37,7 @@ function AdminReservationsPage() {
   const [response, setResponse] =
     useState<Pageable<ReservationResponse> | null>(null);
 
-  // Gemini abiga debounce lahendus
+  // Debounce solution with help of Gemini AI
   const [nameInput, setNameInput] = useState("");
 
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +59,7 @@ function AdminReservationsPage() {
     fetchReservations();
   }, [filters]);
 
+  // Debounce solution with help of AI
   useEffect(() => {
     const timer = setTimeout(() => {
       setFilters(prev => ({
@@ -67,6 +74,7 @@ function AdminReservationsPage() {
 
   const handleInputChange = (name: string, value: unknown) => {
     if (name === "customerName") {
+      // Debounce with help of AI
       setNameInput(value as string);
     } else {
       setFilters(prev => ({ ...prev, [name]: value, page: 0 }));

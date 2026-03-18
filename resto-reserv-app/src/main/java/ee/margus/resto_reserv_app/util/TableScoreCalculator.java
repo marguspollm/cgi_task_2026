@@ -10,12 +10,16 @@ import java.util.Set;
 import static ee.margus.resto_reserv_app.model.TableAttribute.*;
 
 public class TableScoreCalculator {
+    /*
+     * Calculates score for each table based on user request and preferences
+     */
     public static int score(RecommendedTableScore ts, RecommendationRequest request) {
         int score = 0;
         Set<TableAttribute> tablePreferences = request.tablePreferences();
         RestaurantTable restaurantTable = ts.getRestaurantTable();
         Set<TableAttribute> attr = restaurantTable.getAttributes();
 
+        // Exact capacity gets max points and up to +2 capacity size gets points
         if (restaurantTable.getCapacity() == request.partySize()) {
             score += 10;
         } else if (restaurantTable.getCapacity() == request.partySize() + 1) {
@@ -24,9 +28,13 @@ public class TableScoreCalculator {
             score += 3;
         }
 
+        // If the capacity exceeds party size by more then 2, then minus points are
+        // given based on the exceeded capacity size
         int extraSeats = restaurantTable.getCapacity() - request.partySize();
-        if (extraSeats > 2) score -= extraSeats;
+        if (extraSeats > 2)
+            score -= extraSeats;
 
+        // Each user selected table preference gives +2 points
         if (attr.contains(WINDOW) && tablePreferences.contains(WINDOW))
             score += 2;
         if (attr.contains(PRIVATE) && tablePreferences.contains(PRIVATE))

@@ -21,25 +21,31 @@ public class MealService {
     @Value("${mealDb.url}")
     private String mealDbUrl;
 
+    /**
+     * Fetches recommended meals from the MealDB API
+     * 
+     * @return A list of recommended MealDto objects with details
+     */
     public List<MealDto> getRecommendedMeals() {
         List<MealDto> meals = new ArrayList<>();
 
+        // Fetch 4 random meals from MealDB API
         for (int i = 0; i < 4; i++) {
-            MealDbResponse response =
-                restTemplate.exchange(mealDbUrl, HttpMethod.GET, null, MealDbResponse.class)
+            MealDbResponse response = restTemplate.exchange(mealDbUrl, HttpMethod.GET, null, MealDbResponse.class)
                     .getBody();
 
             if (response != null && response.getMeals() != null && !response.getMeals().isEmpty()) {
                 MealDbMealData meal = response.getMeals().getFirst();
-                MealDto mealDto =
-                    new MealDto(
+                MealDto mealDto = new MealDto(
                         Long.valueOf(meal.getIdMeal()),
                         meal.getStrMeal(),
                         meal.getStrCategory(),
                         meal.getStrMealThumb(),
-                        RandomGenerator.price()
-                    );
-                if(!meals.contains(mealDto)) meals.add(mealDto);
+                        RandomGenerator.price() // Generates a random price
+                );
+                // Doesn't allow duplicate meals
+                if (!meals.contains(mealDto))
+                    meals.add(mealDto);
             }
         }
 

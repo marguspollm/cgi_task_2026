@@ -10,6 +10,11 @@ import {
 import { Link } from "react-router";
 import { Outlet } from "react-router";
 
+/**
+ * Admin dashboard page
+ *
+ * Admin page with menu links to pages - Floor plan, Reservations table
+ */
 function AdminDashboardPage() {
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -38,7 +43,7 @@ function AdminDashboardPage() {
           </ListItemButton>
 
           <ListItemButton component={Link} to="/admin/floor">
-            <ListItemText primary="Floor View" />
+            <ListItemText primary="Floor edit" />
           </ListItemButton>
         </List>
       </Drawer>

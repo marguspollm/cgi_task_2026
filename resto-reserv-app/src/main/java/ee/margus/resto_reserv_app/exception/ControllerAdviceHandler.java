@@ -13,13 +13,15 @@ import java.util.Map;
 @RestControllerAdvice
 public class ControllerAdviceHandler {
 
+    /*
+     * Handle validation exceptions from requests
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessage> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-            errors.putIfAbsent(error.getField(), error.getDefaultMessage())
-        );
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> errors.putIfAbsent(error.getField(), error.getDefaultMessage()));
 
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setStatus(HttpStatus.BAD_REQUEST);
@@ -30,6 +32,9 @@ public class ControllerAdviceHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 
+    /*
+     * Handle all other exceptions
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorMessage> handleException(Exception ex) {
         ErrorMessage errorMessage = new ErrorMessage();

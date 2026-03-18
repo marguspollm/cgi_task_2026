@@ -22,7 +22,9 @@ import java.util.List;
 import static ee.margus.resto_reserv_app.util.Validator.validateRequest;
 
 /*
- * One Reservation reserves the table for 2 hours
+ * Service to create and recieve all reservations
+ * IMPORTANT-  
+ *          Reservation reserves the table for 2 hours
  */
 @Service
 public class ReservationService {
@@ -31,10 +33,20 @@ public class ReservationService {
     @Autowired
     private TableRepository tableRepository;
 
+    /**
+     * Creates a new reservation in the system
+     * 
+     * @param reservationRequest The reservation details including date, time, party
+     *                           size, customer info, and table ID
+     * @return ReservationResponse containing the created reservation information
+     * @throws RuntimeException if the table is already booked or doesn't exist
+     */
     @Transactional
     public ReservationResponse create(ReservationRequest reservationRequest) {
+        // Check if request date/time are not in the past
         validateRequest(reservationRequest);
 
+        // Check if requested table is still available
         checkAvailability(reservationRequest.date(), reservationRequest.time(), reservationRequest.tableId());
 
         Customer customer = createCustomer(reservationRequest);
@@ -47,32 +59,62 @@ public class ReservationService {
         return createReservationResponse(savedReservation);
     }
 
+    /**
+     * Retrieves IDs of all tables that are reserved for a specific date and time
+     * 
+     * @param date Reservation date
+     * @param time Reservation time
+     * @return List of table IDs that are currently booked for the given date and
+     *         time
+     */
     public List<Long> getReservedTables(LocalDate date, LocalTime time) {
         return reservationRepository.findByDateAndTime(date, time)
-            .stream()
-            .map(res -> res.getRestaurantTable().getId())
-            .toList();
+                .stream()
+                .map(res -> res.getRestaurantTable().getId())
+                .toList();
     }
 
+    /**
+     * Retrieves filtered reservations from the database
+     * Filters can include date, time, and customer name, if not specified, all
+     * reservations are returned
+     * 
+     * @param filters  Filters - date, time, customerName (all optional)
+     * @param pageable Pagination information (page number, size, sorting)
+     * @return Paginated response containing matching reservations
+     */
     public Page<ReservationResponse> getFilteredReservations(ReservationFilters filters, Pageable pageable) {
         Page<Reservation> reservations = reservationRepository
-            .findWithOptionalFilters(filters.date(), filters.time(), filters.customerName(), pageable);
+                .findWithOptionalFilters(filters.date(), filters.time(), filters.customerName(), pageable);
 
         return reservations.map(this::createReservationResponse);
     }
 
+    /**
+     * Verifies if a table is available for reservation at the given date and time.
+     * Checks for conflicts within a 2-hour window (1 hour before and after the
+     * requested time)
+     * 
+     * @param date    The desired reservation date
+     * @param time    The desired reservation time
+     * @param tableId ID of the table to check
+     * @throws RuntimeException if the table is already booked in the specified time
+     *                          window
+     */
     private void checkAvailability(LocalDate date,
-                                   LocalTime time,
-                                   Long tableId) {
+            LocalTime time,
+            Long tableId) {
+        // Check for conflicts within 2-hour buffer (2 hours before and after requested
+        // time)
         List<Reservation> conflicts = reservationRepository
-            .findByDateAndTimeBetweenAndRestaurantTable_Id(
-                date,
-                time.minusHours(2),
-                time.plusHours(2),
-                tableId
-            );
+                .findByDateAndTimeBetweenAndRestaurantTable_Id(
+                        date,
+                        time.minusHours(2),
+                        time.plusHours(2),
+                        tableId);
 
-        if (!conflicts.isEmpty()) throw new RuntimeException("Table is already booked for this time");
+        if (!conflicts.isEmpty())
+            throw new RuntimeException("Table is already booked for this time");
     }
 
     private @NonNull Reservation createReservation(ReservationRequest reservationRequest) {
@@ -82,8 +124,9 @@ public class ReservationService {
         reservation.setTime(reservationRequest.time());
         reservation.setPartySize(reservationRequest.partySize());
 
+        // Check if given table exists in database
         RestaurantTable dbRestaurantTable = tableRepository.findById(reservationRequest.tableId())
-            .orElseThrow(() -> new RuntimeException("Table doesn't exist!"));
+                .orElseThrow(() -> new RuntimeException("Table doesn't exist!"));
         reservation.setRestaurantTable(dbRestaurantTable);
 
         return reservation;
@@ -95,13 +138,12 @@ public class ReservationService {
 
     private @NonNull ReservationResponse createReservationResponse(Reservation reservation) {
         return new ReservationResponse(
-            reservation.getId(),
-            reservation.getCustomer().getName(),
-            reservation.getCustomer().getPhoneNumber(),
-            reservation.getRestaurantTable().getId(),
-            reservation.getDate(),
-            reservation.getTime(),
-            reservation.getPartySize()
-        );
+                reservation.getId(),
+                reservation.getCustomer().getName(),
+                reservation.getCustomer().getPhoneNumber(),
+                reservation.getRestaurantTable().getId(),
+                reservation.getDate(),
+                reservation.getTime(),
+                reservation.getPartySize());
     }
 }

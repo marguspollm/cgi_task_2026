@@ -1,7 +1,7 @@
 import { Box, Paper, Tooltip, Typography } from "@mui/material";
-import type { TableAttribute } from "../models/TableAttribute";
 import type { MovabelTable } from "../models/MovableTable";
 import type { Table } from "../models/Table";
+import { getTableAttribute } from "../utils/formatters";
 
 type FloorProps = {
   tables: MovabelTable[] | Table[];
@@ -28,15 +28,6 @@ function Floor({
 }: FloorProps) {
   const isEdit = mode === "edit";
   const isBooked = (id: number) => booked?.includes(id);
-
-  const getTableAttribute = (attr: TableAttribute[]) => {
-    const str: string[] = [];
-    if (attr.includes("WINDOW")) str.push("Window table");
-    if (attr.includes("EASY_ACCESSIBLE")) str.push("Easily accessible");
-    if (attr.includes("PRIVATE")) str.push("Private table");
-    if (attr.includes("NEAR_KIDS_AREA")) str.push("Near kids area");
-    return str.join("\r\n");
-  };
 
   return (
     <Box>
@@ -78,7 +69,7 @@ function Floor({
                     </Typography>
                   )}
                   {bookedState && (
-                    <Typography variant="caption" color="error">
+                    <Typography variant="caption" color="warning">
                       Booked
                     </Typography>
                   )}

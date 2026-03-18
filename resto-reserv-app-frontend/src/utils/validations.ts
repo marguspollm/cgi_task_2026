@@ -1,6 +1,12 @@
 import type { FormErrors, NewTableErrors } from "../models/FormErrors";
 import type { ReservationFormState } from "../models/ReservationFormState";
 
+/**
+ * Validates the availability form fields before checking table availability
+ *
+ * @param form Ration form state to validate
+ * @returns FormErros containing field names and error messages, empty if no errors
+ */
 export const validateAvailability = (
   form: ReservationFormState,
 ): FormErrors => {
@@ -14,6 +20,13 @@ export const validateAvailability = (
   return errors;
 };
 
+/**
+ * Validates the reservation form before submission
+ *
+ * @param form The reservation form state to validate
+ * @param selectedTable ID of the selected table
+ * @returns FormErrors containing field names and error messages, empty if no errors
+ */
 export const validateReservation = (
   form: ReservationFormState,
   selectedTable: number | null,
@@ -27,6 +40,12 @@ export const validateReservation = (
   return errors;
 };
 
+/**
+ * Validates a new table capacity in the floor editor
+ *
+ * @param capacity Table capacity to validate
+ * @returns NewTableErrors containing error messages, empty if no errors
+ */
 export const validateNewTable = (capacity: number): NewTableErrors => {
   const errors: NewTableErrors = {};
   if (capacity <= 0) errors.capacity = "Needs to be atleast 1";

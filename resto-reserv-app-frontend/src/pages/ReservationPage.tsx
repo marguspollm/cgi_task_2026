@@ -31,6 +31,21 @@ import ReservationConfirmationCard from "../components/ReservationConfirmationCa
 import { createDate, formatDate } from "../utils/formatters";
 import type { TableAttribute } from "../models/TableAttribute";
 
+/**
+ * ReservationPage
+ *
+ * Main page for customer reservations. Displays the restaurant floor plan,
+ * manages the reservation form, handles table selection and availability checking,
+ * and processes reservation confirmations
+ *
+ * Workflow:
+ * 1. Load all available tables and current reservations on component mount
+ * 2. Customer fills in date, time, party size, and table preferences
+ * 3. System recommends available tables based on criteria
+ * 4. Customer selects a table visually on the floor plan
+ * 5. Customer enters personal details (name, phone)
+ * 6. System creates the reservation and provides confirmation
+ */
 function ReservationPage() {
   const today = new Date().toISOString().split("T")[0];
   const defaultForm = {
@@ -86,14 +101,20 @@ function ReservationPage() {
     fetchBookings();
   }, []);
 
+  /**
+   * Handles table selection on the floor plan
+   * Prevents selection of already booked tables
+   */
   const handleTableClick = (id: number) => {
     if (bookedTables.includes(id)) return;
     setSelectedTableId(id);
   };
 
+  // Handles and validates available tables check
   const handleCheckAvailability = async (
     e: React.SubmitEvent<HTMLFormElement>,
   ) => {
+    // Don't allow check when loading in progress
     if (loading) return;
     e.preventDefault();
     setLoading(true);
@@ -102,6 +123,7 @@ function ReservationPage() {
     setSelectedTableId(null);
     setRecommendedTableId(null);
 
+    //Validate required form fields
     const errors = validateAvailability(reservationForm);
 
     if (Object.keys(errors).length > 0) {
@@ -111,6 +133,7 @@ function ReservationPage() {
     }
 
     try {
+      // Create recommendation request payload
       const payload: RecommendRequest = {
         partySize: reservationForm.partySize,
         date: reservationForm.date,
@@ -118,6 +141,7 @@ function ReservationPage() {
         tablePreferences: tablePreferences,
       };
 
+      //Get recommended table and booked table IDs from backend
       const recData = await getRecommendedTable(payload);
       const bookedData = await getReservedTables(
         reservationForm.date,
@@ -132,12 +156,15 @@ function ReservationPage() {
     }
   };
 
-  const handleConfirmReservation = async () => {
+  // Handles and validates creating resrvation
+  const handleCreateReservation = async () => {
+    // Don't allow creating reservation when no selected table or loading in progress
     if (!selectedTableId || loading) return;
     setLoading(true);
     setError(null);
     setFormErrors({});
 
+    // Validates required form fields from creating reservation
     const errors = validateReservation(reservationForm, selectedTableId);
 
     if (Object.keys(errors).length > 0) {
@@ -147,6 +174,7 @@ function ReservationPage() {
     }
 
     try {
+      // Create reservation payload
       const payload: ReservationRequest = {
         customerName: reservationForm.customerName,
         phoneNumber: reservationForm.phoneNumber,
@@ -156,6 +184,7 @@ function ReservationPage() {
         partySize: reservationForm.partySize,
       };
 
+      // Send reservation info and get updated tables data from backend
       const confirmedReservation = await createReservation(payload);
       const bookedData = await getReservedTables(
         reservationForm.date,
@@ -171,6 +200,7 @@ function ReservationPage() {
     } catch (error) {
       handleError(error, setError);
       if (error instanceof ApiError) {
+        // Check if backend sends back validaton errors
         if (error.payload?.errors) {
           setFormErrors(error.payload.errors);
         }
@@ -180,6 +210,7 @@ function ReservationPage() {
     }
   };
 
+  // Updates a specific form field and clears its error message
   const handleFormChange = (name: string, value: unknown) => {
     setReservationForm(prev => ({ ...prev, [name]: value }));
     setFormErrors(prev => ({
@@ -188,6 +219,7 @@ function ReservationPage() {
     }));
   };
 
+  // Updates the selected table attribute preferences
   const handleFormPreferenceChange = (value: TableAttribute[]) => {
     setTablePreferences(value);
   };
@@ -240,7 +272,7 @@ function ReservationPage() {
                 formPreferenceChange={handleFormPreferenceChange}
                 selectedTableId={selectedTableId}
                 loading={loading}
-                confirmReservation={handleConfirmReservation}
+                createReservation={handleCreateReservation}
                 errors={formErrors}
                 tablePreferences={tablePreferences}
               />

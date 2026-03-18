@@ -19,30 +19,41 @@ public class RecommendService {
     @Autowired
     private TableRepository tableRepository;
 
+    /**
+     * Recommends the best available table based on request criteria
+     * 
+     * @param request The recommendation criteria (party size, date, time, preferred
+     *                attributes)
+     * @return ID of the recommended table
+     * @throws RuntimeException if no available tables meet the requirements
+     */
     @Transactional(readOnly = true)
     public Long getRecommendedTable(RecommendationRequest request) {
         validateRequest(request);
 
+        // Get all tables that are equal or greater then party size and map to object
         List<RecommendedTableScore> availableTableScore = tableRepository
-            .findByCapacityGreaterThanEqual(
-                request.partySize(),
-                request.date(),
-                request.time().minusHours(2),
-                request.time().plusHours(2)
-            )
-            .stream()
-            .map(table -> new RecommendedTableScore(table, 0))
-            .collect(Collectors.toList());
+                .findByCapacityGreaterThanEqual(
+                        request.partySize(),
+                        request.date(),
+                        request.time().minusHours(2),
+                        request.time().plusHours(2))
+                .stream()
+                .map(table -> new RecommendedTableScore(table, 0))
+                .collect(Collectors.toList());
 
+        // Calculate recommendation score for each table
         availableTableScore.forEach(tableScore -> tableScore
-            .setScore(TableScoreCalculator.score(tableScore, request)));
+                .setScore(TableScoreCalculator.score(tableScore, request)));
 
+        // Sort by highest score
         availableTableScore.sort(Comparator.comparingInt(RecommendedTableScore::getScore).reversed());
 
+        // Return
         return availableTableScore
-            .stream()
-            .findFirst()
-            .map(ts -> ts.getRestaurantTable().getId())
-            .orElseThrow(() -> new RuntimeException("No available tables to recommend!"));
+                .stream()
+                .findFirst()
+                .map(ts -> ts.getRestaurantTable().getId())
+                .orElseThrow(() -> new RuntimeException("No available tables to recommend!"));
     }
 }

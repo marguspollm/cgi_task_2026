@@ -6,6 +6,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Validator {
+    /**
+     * Validates request time and date params
+     * 
+     * @param request Reservation request with details
+     * @throws RunTimeException if time or date and time are in the past
+     */
     public static void validateRequest(ReservationRequestDetails request) {
         if (request.date().isBefore(LocalDate.now())) {
             throw new RuntimeException("Reservation date cannot be in the past!");

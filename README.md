@@ -1,32 +1,77 @@
 # Restaurant Reservation System
 
-This project is a full-stack application for restaurant reservations, consisting of a Spring Boot backend and a React frontend.
+A full-stack restaurant reservation management application built with Spring Boot and React, allowing customers to make reservations and administrators to manage them efficiently.
 
 ## Prerequisites
 
-- Docker
-- Docker Compose
+- Docker (version 20.10+)
+- Docker Compose (version 1.29+)
 
 ## Getting Started
 
-1. **Start the application**:
+### Quick Start with Docker Compose
 
+1. **Clone the repository**:
+
+   ```bash
+   git clone <repository-url>
+   cd cgi_task_2026
    ```
+
+2. **Build and start the application**:
+
+   ```bash
    docker-compose up --build
    ```
 
-   This will:
-   - Build and start the Spring Boot backend on port 8080
-   - Build and start the React frontend on port 5173
+   This command will:
+   - Build the Spring Boot backend from `resto-reserv-app/`
+   - Build the React frontend from `resto-reserv-app-frontend/`
+   - Start both services in containers
+   - Link them via Docker network
 
-2. **Access the application**:
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:8080
+3. **Access the application**:
+   - **Frontend**: [http://localhost:5173](http://localhost:5173)
+   - **Backend API**: [http://localhost:8080](http://localhost:8080)
 
-## Stopping the Application
+4. **Stop the application**:
+   ```bash
+   docker-compose down
+   ```
 
-To stop the application:
+### Local Development Setup
 
+#### Backend
+
+```bash
+cd resto-reserv-app
+./mvnw spring-boot:run
 ```
-docker-compose down
+
+#### Frontend
+
+```bash
+cd resto-reserv-app-frontend
+npm install
+npm run dev
 ```
+
+## Features
+
+### Customer Features
+
+- **Easy Reservation Booking**: Book a table with date, time, party size, and preferences
+- **Table Selection**: Choose tables based on available attributes (window seating, smoking area, etc.)
+- **Real-time Availability**: Check table availability before confirming reservation
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+
+### Admin Features
+
+- **Dashboard**: View and manage all reservations with filtering and pagination
+- **Floor Editor**: Visual editor to manage restaurant floor layout and tables
+- **Reservation Management**: View detailed reservation information and history
+- **Dynamic Table Management**: Add, remove, and update table attributes
+
+---
+
+**Notes**

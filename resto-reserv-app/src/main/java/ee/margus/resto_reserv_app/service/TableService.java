@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,40 +23,78 @@ public class TableService {
     @Autowired
     private ReservationRepository reservationRepository;
 
+    /**
+     * Get all restaurant tables from the database
+     * 
+     * @return List of all tables with their details
+     */
     @Transactional(readOnly = true)
     public List<TableDto> getAllTables() {
         return tableRepository.findAll()
-            .stream()
-            .map(this::getTableDto)
-            .toList();
+                .stream()
+                .map(this::getTableDto)
+                .toList();
     }
 
+    /**
+     * Saves or updates a list of tables in the database
+     * Removes tables not in the provided list
+     * and creates/updates tables that are in the list
+     * 
+     * @param tables List of TableDto objects to save (new tables should have null
+     *               ID)
+     * @return The saved/updated tables with their assigned IDs
+     */
     @Transactional
     public List<TableDto> saveTables(List<TableDto> tables) {
-        List<RestaurantTable> dbTables = tableRepository.findAll();
+        // Get all tables
+        Map<Long, RestaurantTable> dbTables = tableRepository.findAll()
+                .stream()
+                .collect(Collectors.toMap(RestaurantTable::getId, rt -> rt));
 
+        // Create set of table IDs from request
         Set<Long> dtoIds = tables.stream()
-            .map(TableDto::id)
-            .filter(id -> id != null && id > 0)
-            .collect(Collectors.toSet());
+                .map(TableDto::id)
+                .filter(id -> id != null && id > 0)
+                .collect(Collectors.toSet());
 
-        List<RestaurantTable> deleteTables = dbTables.stream()
-            .filter(table -> !dtoIds.contains(table.getId()))
-            .toList();
+        // Check if there are tables that are missing from request, but are in database
+        // and delete them
+        List<RestaurantTable> deleteTables = dbTables.values().stream()
+                .filter(table -> !dtoIds.contains(table.getId()))
+                .collect(Collectors.toList());
 
         if (!deleteTables.isEmpty()) {
             deleteTables(deleteTables);
         }
 
+        // Create updated tables
         List<RestaurantTable> restaurantTables = tables.stream()
-            .map(this::getRestaurantTable)
-            .toList();
+                .map(table -> getRestaurantTable(table, dbTables))
+                .toList();
 
         List<RestaurantTable> savedRTs = tableRepository.saveAll(restaurantTables);
 
         return savedRTs.stream()
-            .map(this::getTableDto)
-            .toList();
+                .map(this::getTableDto)
+                .toList();
+    }
+
+    /**
+     * Deletes a table from the database if it has no active reservations
+     * 
+     * @param id ID of the table to delete
+     * @throws RuntimeException if the table has any active reservations
+     */
+    @Transactional
+    public void delete(Long id) {
+        // Check if table has any future reservations
+        boolean hasReservation = reservationRepository
+                .existsByRestaurantTable_IdAndDateGreaterThanEqual(id, LocalDate.now());
+        if (hasReservation)
+            throw new RuntimeException("Table is reserved and cannot be deleted - Id: " + id);
+
+        tableRepository.deleteById(id);
     }
 
     @Transactional
@@ -62,12 +102,13 @@ public class TableService {
         deleteTables.forEach(restaurantTable -> delete(restaurantTable.getId()));
     }
 
-    private @NonNull RestaurantTable getRestaurantTable(TableDto tableDto) {
+    private @NonNull RestaurantTable getRestaurantTable(TableDto tableDto, Map<Long, RestaurantTable> dbTables) {
         RestaurantTable rt;
 
+        // Check if a table has id from request and it exists in database mapping
         if (tableDto.id() != null) {
-            rt = tableRepository.findById(tableDto.id())
-                .orElseThrow(() -> new RuntimeException("Table doesn't exist"));
+            rt = Optional.of(dbTables.get(tableDto.id()))
+                    .orElseThrow(() -> new RuntimeException("Table doesn't exist"));
         } else {
             rt = new RestaurantTable();
         }
@@ -82,20 +123,10 @@ public class TableService {
 
     private @NonNull TableDto getTableDto(RestaurantTable table) {
         return new TableDto(
-            table.getId(),
-            table.getCapacity(),
-            table.getAttributes(),
-            table.getLocationX(),
-            table.getLocationY()
-        );
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        boolean hasReservation = reservationRepository
-            .existsByRestaurantTable_IdAndDateGreaterThanEqual(id, LocalDate.now());
-        if (hasReservation)
-            throw new RuntimeException("Table is reserved and cannot be deleted - Id: " + id);
-        tableRepository.deleteById(id);
+                table.getId(),
+                table.getCapacity(),
+                table.getAttributes(),
+                table.getLocationX(),
+                table.getLocationY());
     }
 }

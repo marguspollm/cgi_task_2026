@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
-// Creates random reservations and tables for demo
+// Populates reservations and tables with random data for demo
 public class RandomGenerator {
     private static final Random random = new Random();
 
@@ -53,7 +53,8 @@ public class RandomGenerator {
                 for (int j = 0; j < attrCount; j++) {
                     int taValesLength = taValues.length;
                     int i = random.nextInt(taValesLength);
-                    if (i < taValesLength) attrs.add(taValues[i]);
+                    if (i < taValesLength)
+                        attrs.add(taValues[i]);
                 }
 
                 RestaurantTable rt = new RestaurantTable();
@@ -61,8 +62,6 @@ public class RandomGenerator {
                 rt.setAttributes(attrs);
                 rt.setLocationX(100 + col * spacingX);
                 rt.setLocationY(100 + row * spacingY);
-
-                System.out.println(rt);
 
                 restaurantTables.add(rt);
             }
