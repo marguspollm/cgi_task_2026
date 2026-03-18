@@ -9,9 +9,9 @@ import {
 } from "@mui/material";
 import type { FormErrors } from "../models/FormErrors";
 import type { ReservationFormState } from "../models/ReservationFormState";
-import InputTimeSlots from "./InputTimeSlots";
 import TableAttributesSelect from "./TableAttributesSelect";
 import type { TableAttribute } from "../models/TableAttribute";
+import TimeSelect from "./InputTimeSlots";
 
 type ReservationFormProps = {
   form: ReservationFormState;
@@ -22,6 +22,7 @@ type ReservationFormProps = {
   confirmReservation: () => void;
   formChange: (name: string, value: unknown) => void;
   formPreferenceChange: (value: TableAttribute[]) => void;
+  tablePreferences: TableAttribute[];
 };
 
 function ReservationForm({
@@ -33,6 +34,7 @@ function ReservationForm({
   confirmReservation,
   formChange,
   formPreferenceChange,
+  tablePreferences,
 }: ReservationFormProps) {
   return (
     <Paper sx={{ p: 3 }}>
@@ -56,7 +58,7 @@ function ReservationForm({
             </Grid>
 
             <Grid size={{ xs: 12, md: 5 }}>
-              <InputTimeSlots
+              <TimeSelect
                 value={form.time}
                 onChange={formChange}
                 errors={errors}
@@ -78,13 +80,12 @@ function ReservationForm({
             </Grid>
           </Grid>
 
-          <Divider />
-
           <Grid container spacing={1}>
             <Grid size={{ xs: 12 }}>
               <TableAttributesSelect
                 onSelectAttribute={formPreferenceChange}
                 label={"Table preferences"}
+                values={tablePreferences}
               />
             </Grid>
           </Grid>

@@ -2,19 +2,14 @@ import { MenuItem, TextField } from "@mui/material";
 import { generateTimeSlots } from "../utils/constants";
 import type { FormErrors } from "../models/FormErrors";
 
-type InputTimeSlotsProps = {
+type TimeSelectProps = {
   value?: string;
   onChange: (name: string, value: unknown) => void;
   errors?: FormErrors;
   fullWidth: boolean;
 };
 
-function InputTimeSlots({
-  value,
-  onChange,
-  errors,
-  fullWidth,
-}: InputTimeSlotsProps) {
+function TimeSelect({ value, onChange, errors, fullWidth }: TimeSelectProps) {
   return (
     <TextField
       label="Time"
@@ -25,7 +20,6 @@ function InputTimeSlots({
       onChange={e => onChange("time", e.target.value)}
       error={!!errors?.time}
       helperText={errors?.time}
-      sx={{ minWidth: "200px" }}
     >
       <MenuItem key={""} value={""}>
         All times
@@ -39,4 +33,4 @@ function InputTimeSlots({
   );
 }
 
-export default InputTimeSlots;
+export default TimeSelect;

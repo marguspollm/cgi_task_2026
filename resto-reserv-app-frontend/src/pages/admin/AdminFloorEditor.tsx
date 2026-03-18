@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { getTables, saveTables } from "../../services/table.service";
+import {
+  deleteTable,
+  getTables,
+  saveTables,
+} from "../../services/table.service";
 import type { Table } from "../../models/Table";
 import type { MovabelTable } from "../../models/MovableTable";
 import {
@@ -10,6 +14,7 @@ import {
   Button,
   Alert,
   Container,
+  Snackbar,
 } from "@mui/material";
 import { handleError } from "../../utils/errors";
 import Floor from "../../components/Floor";
@@ -25,7 +30,13 @@ function AdminFloorEditor() {
   const [newCapacity, setNewCapacity] = useState(0);
   const [newAttributes, setNewAttributes] = useState<TableAttribute[]>([]);
 
+  const [saveDisabled, setSaveDisabled] = useState(true);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
   const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<NewTableErrors | null>(null);
 
@@ -63,7 +74,8 @@ function AdminFloorEditor() {
 
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
     if (!e.dataTransfer) return;
-    const id = parseInt(e.dataTransfer.getData("id"));
+    setSaveDisabled(false);
+    const dragTable = JSON.parse(e.dataTransfer.getData("table"));
     const containerRect = e.currentTarget.getBoundingClientRect();
 
     const mouseX = e.clientX - containerRect.left;
@@ -74,7 +86,7 @@ function AdminFloorEditor() {
 
     setTables(prev =>
       prev.map(tabel => {
-        if (tabel.id !== id) return tabel;
+        if (tabel.id !== dragTable.id) return tabel;
         return { ...tabel, locationX: newX, locationY: newY };
       }),
     );
@@ -90,6 +102,7 @@ function AdminFloorEditor() {
   const handleAddTable = (e: React.MouseEvent) => {
     e.preventDefault();
 
+    setFormErrors(null);
     const errors = validateNewTable(newCapacity);
 
     if (Object.keys(errors).length > 0) {
@@ -100,6 +113,9 @@ function AdminFloorEditor() {
 
     const floorElement = document.getElementById("floor");
     if (!floorElement) return;
+
+    setSaveDisabled(false);
+
     const containerRect = floorElement.getBoundingClientRect();
     const newX = containerRect.width / 2;
     const newY = containerRect.height / 2;
@@ -130,12 +146,20 @@ function AdminFloorEditor() {
       const movableTables = getMovableTables(data);
       setTables(movableTables);
       setOriginalTables(movableTables);
+      setNewAttributes([]);
+      showSnackbar("Tables saved!");
     } catch (error) {
       handleError(error, setError);
       setTables([...originalTables]);
+      setSaveDisabled(true);
     } finally {
       setLoading(false);
     }
+  };
+
+  const showSnackbar = (message: string) => {
+    setSuccessMessage(message);
+    setSnackbarOpen(true);
   };
 
   return (
@@ -162,7 +186,8 @@ function AdminFloorEditor() {
           <Button
             variant="contained"
             onClick={handleSave}
-            disabled={loading}
+            loading={loading}
+            disabled={saveDisabled}
             fullWidth
             color="success"
           >
@@ -184,6 +209,7 @@ function AdminFloorEditor() {
               <TableAttributesSelect
                 onSelectAttribute={setNewAttributes}
                 label="Add table attributes"
+                values={newAttributes}
               />
 
               <Stack direction="row" spacing={2}>
@@ -200,6 +226,20 @@ function AdminFloorEditor() {
           </Paper>
         </Stack>
       </Container>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

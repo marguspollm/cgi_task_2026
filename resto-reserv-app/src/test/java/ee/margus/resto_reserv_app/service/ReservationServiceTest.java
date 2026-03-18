@@ -23,6 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,7 +72,7 @@ class ReservationServiceTest {
 
         Reservation dbReservation = getReservation(restaurantTable, DATE, TIME, request.partySize());
 
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(restaurantTable));
+        when(tableRepository.findById(eq(1L))).thenReturn(Optional.of(restaurantTable));
         when(reservationRepository.save(any(Reservation.class))).thenReturn(dbReservation);
 
         ReservationResponse response = service.create(request);
@@ -80,6 +81,7 @@ class ReservationServiceTest {
         assertEquals("Test Tester", response.customerName());
         assertEquals("5555555", response.phoneNumber());
         assertEquals(1L, response.tableId());
+        verify(reservationRepository).save(any(Reservation.class));
     }
 
     @Test
@@ -102,11 +104,11 @@ class ReservationServiceTest {
 
     @Test
     void givenCurrentDateOrTime_whenGetReservedTables_thenReturnCurrentReservedTableIds() {
-        LocalTime timeNow= LocalTime.now();
+        LocalTime timeNow = LocalTime.now();
         RestaurantTable restaurantTable = getTable(1L);
         Reservation reservation = getReservation(restaurantTable, LocalDate.now(), timeNow, 2);
 
-        when(reservationRepository.findByDateAndTime(any(),any()))
+        when(reservationRepository.findByDateAndTime(any(), any()))
             .thenReturn(List.of(reservation));
 
         assertEquals(List.of(1L), service.getReservedTables(LocalDate.now(), timeNow));

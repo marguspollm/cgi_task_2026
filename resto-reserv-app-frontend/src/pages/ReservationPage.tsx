@@ -39,7 +39,7 @@ function ReservationPage() {
     time: "",
     customerName: "",
     phoneNumber: "",
-    userPreferences: [],
+    tablePreferences: [],
   };
   const [tables, setTables] = useState<Table[]>([]);
   const [bookedTables, setBookedTables] = useState<number[]>([]);
@@ -52,7 +52,9 @@ function ReservationPage() {
     null,
   );
   const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
-  const [userPreferences, setUserPreferences] = useState<TableAttribute[]>([]);
+  const [tablePreferences, setTablePreferences] = useState<TableAttribute[]>(
+    [],
+  );
 
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -98,6 +100,7 @@ function ReservationPage() {
     setError(null);
     setFormErrors({});
     setSelectedTableId(null);
+    setRecommendedTableId(null);
 
     const errors = validateAvailability(reservationForm);
 
@@ -112,7 +115,7 @@ function ReservationPage() {
         partySize: reservationForm.partySize,
         date: reservationForm.date,
         time: reservationForm.time,
-        userPreferences: userPreferences,
+        tablePreferences: tablePreferences,
       };
 
       const recData = await getRecommendedTable(payload);
@@ -164,6 +167,7 @@ function ReservationPage() {
       setSelectedTableId(null);
       setRecommendedTableId(null);
       setReservationForm(defaultForm);
+      setTablePreferences([]);
     } catch (error) {
       handleError(error, setError);
       if (error instanceof ApiError) {
@@ -185,7 +189,7 @@ function ReservationPage() {
   };
 
   const handleFormPreferenceChange = (value: TableAttribute[]) => {
-    setUserPreferences(value);
+    setTablePreferences(value);
   };
 
   return (
@@ -238,6 +242,7 @@ function ReservationPage() {
                 loading={loading}
                 confirmReservation={handleConfirmReservation}
                 errors={formErrors}
+                tablePreferences={tablePreferences}
               />
             </Box>
           </Grid>

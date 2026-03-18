@@ -12,7 +12,7 @@ import static ee.margus.resto_reserv_app.model.TableAttribute.*;
 public class TableScoreCalculator {
     public static int score(RecommendedTableScore ts, RecommendationRequest request) {
         int score = 0;
-        Set<TableAttribute> userPreferences = request.userPreferences();
+        Set<TableAttribute> tablePreferences = request.tablePreferences();
         RestaurantTable restaurantTable = ts.getRestaurantTable();
         Set<TableAttribute> attr = restaurantTable.getAttributes();
 
@@ -27,13 +27,13 @@ public class TableScoreCalculator {
         int extraSeats = restaurantTable.getCapacity() - request.partySize();
         if (extraSeats > 2) score -= extraSeats;
 
-        if (attr.contains(WINDOW) && userPreferences.contains(WINDOW))
+        if (attr.contains(WINDOW) && tablePreferences.contains(WINDOW))
             score += 2;
-        if (attr.contains(PRIVATE) && userPreferences.contains(PRIVATE))
+        if (attr.contains(PRIVATE) && tablePreferences.contains(PRIVATE))
             score += 2;
-        if (attr.contains(EASY_ACCESSIBLE) && userPreferences.contains(EASY_ACCESSIBLE))
+        if (attr.contains(EASY_ACCESSIBLE) && tablePreferences.contains(EASY_ACCESSIBLE))
             score += 2;
-        if (attr.contains(NEAR_KIDS_AREA) && userPreferences.contains(NEAR_KIDS_AREA))
+        if (attr.contains(NEAR_KIDS_AREA) && tablePreferences.contains(NEAR_KIDS_AREA))
             score += 2;
 
         return score;

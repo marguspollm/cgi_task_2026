@@ -10,6 +10,7 @@ import {
   TablePagination,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import type { ReservationResponse } from "../../models/ReservationResponse";
@@ -17,7 +18,7 @@ import type { ReservationFilters } from "../../models/ReservationFilters";
 import { getReservations } from "../../services/reservation.service";
 import { handleError } from "../../utils/errors";
 import type { Pageable } from "../../models/Pageable";
-import InputTimeSlots from "../../components/InputTimeSlots";
+import TimeSelect from "../../components/InputTimeSlots";
 
 function AdminReservationsPage() {
   const [filters, setFilters] = useState<ReservationFilters>({
@@ -108,7 +109,7 @@ function AdminReservationsPage() {
           }}
         />
 
-        <InputTimeSlots
+        <TimeSelect
           value={filters.time}
           onChange={handleInputChange}
           fullWidth={false}
@@ -143,6 +144,13 @@ function AdminReservationsPage() {
             </TableHead>
 
             <TableBody>
+              {response?.content.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    <Typography>No matching reservations found</Typography>
+                  </TableCell>
+                </TableRow>
+              )}
               {response?.content.map((r: ReservationResponse) => (
                 <TableRow key={r.id}>
                   <TableCell>{r.customerName}</TableCell>

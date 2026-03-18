@@ -36,11 +36,11 @@ class ValidatorTest {
     }
 
     @Test
-    void givenPastDate_whenValidateRequest_thenDoNothing() {
+    void givenPastDate_whenValidateRequest_thenThrowException() {
         RecommendationRequest request = new RecommendationRequest(
             1,
-            LocalDate.now().minusDays(2),
-            LocalTime.now().plusHours(2),
+            LocalDate.of(1999, 12, 31),
+            LocalTime.now(),
             null);
 
         Exception ex = assertThrows(RuntimeException.class, () -> Validator.validateRequest(request));
@@ -48,11 +48,11 @@ class ValidatorTest {
     }
 
     @Test
-    void givenPastTime_whenValidateRequest_thenDoNothing() {
+    void givenPastTime_whenValidateRequest_thenThrowException() {
         RecommendationRequest request = new RecommendationRequest(
             1,
             LocalDate.now(),
-            LocalTime.now().minusHours(2),
+            LocalTime.now().minusMinutes(5),
             null);
 
         Exception ex = assertThrows(RuntimeException.class, () -> Validator.validateRequest(request));

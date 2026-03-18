@@ -6,5 +6,5 @@ export type ReservationFormState = {
   partySize: number;
   date: string;
   time: string;
-  userPreferences: TableAttribute[];
+  tablePreferences: TableAttribute[];
 };

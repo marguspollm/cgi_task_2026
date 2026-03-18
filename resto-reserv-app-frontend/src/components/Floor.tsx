@@ -92,7 +92,10 @@ function Floor({
                   isEdit
                     ? e =>
                         table.id &&
-                        e.dataTransfer.setData("id", table.id.toString())
+                        e.dataTransfer.setData(
+                          "table",
+                          JSON.stringify({ id: table.id, isNew: isNew }),
+                        )
                     : undefined
                 }
                 onClick={() => {

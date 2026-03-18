@@ -14,5 +14,5 @@ public record RecommendationRequest(
     LocalDate date,
     @NotNull(message = "Time is required!")
     LocalTime time,
-    Set<TableAttribute> userPreferences) implements ReservationRequestDetails {
+    Set<TableAttribute> tablePreferences) implements ReservationRequestDetails {
 }

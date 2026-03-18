@@ -5,8 +5,12 @@ import type { ReservationRequest } from "../models/ReservationRequest";
 import type { ReservationResponse } from "../models/ReservationResponse";
 
 export const getReservedTables = (date?: string, time?: string) => {
-  const payload = date && time ? `?date=${date}&time=${time}` : "";
-  return apiFetch<number[]>(`reserved-tables${payload}`);
+  const params = new URLSearchParams();
+  if (date && time) {
+    params.append("date", date);
+    params.append("time", time);
+  }
+  return apiFetch<number[]>(`reserved-tables?${params}`);
 };
 
 export const createReservation = (request: ReservationRequest) => {

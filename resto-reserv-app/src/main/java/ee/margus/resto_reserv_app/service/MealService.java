@@ -39,7 +39,7 @@ public class MealService {
                         meal.getStrMealThumb(),
                         RandomGenerator.price()
                     );
-                meals.add(mealDto);
+                if(!meals.contains(mealDto)) meals.add(mealDto);
             }
         }
 
