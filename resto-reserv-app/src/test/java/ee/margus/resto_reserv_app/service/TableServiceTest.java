@@ -64,7 +64,6 @@ class TableServiceTest {
         TableDto dto = new TableDto(1L, 2, Set.of(), 100, 100);
 
         when(tableRepository.findAll()).thenReturn(List.of(existing));
-        when(tableRepository.findById(eq(1L))).thenReturn(Optional.of(existing));
         when(tableRepository.saveAll(any())).thenReturn(List.of(existing));
 
         tableService.saveTables(List.of(dto));
@@ -83,7 +82,6 @@ class TableServiceTest {
         TableDto dto = new TableDto(1L, 2, Set.of(), 100, 100);
 
         when(tableRepository.findAll()).thenReturn(List.of(dbTable1, dbTable2));
-        when(tableRepository.findById(eq(1L))).thenReturn(Optional.of(dbTable1));
         when(tableRepository.saveAll(any())).thenReturn(List.of(dbTable1));
         when(reservationRepository.existsByRestaurantTable_IdAndDateGreaterThanEqual(any(), any())).thenReturn(false);
 
@@ -98,7 +96,6 @@ class TableServiceTest {
         TableDto dto = new TableDto(1L, 2, Set.of(), 100, 100);
 
         when(tableRepository.findAll()).thenReturn(List.of());
-        when(tableRepository.findById(eq(1L))).thenReturn(Optional.empty());
 
         Exception ex = assertThrows(RuntimeException.class, () -> tableService.saveTables(List.of(dto)));
         assertEquals("Table doesn't exist", ex.getMessage());

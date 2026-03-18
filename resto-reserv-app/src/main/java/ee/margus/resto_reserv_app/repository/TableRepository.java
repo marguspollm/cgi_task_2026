@@ -11,17 +11,20 @@ import java.util.List;
 
 @Repository
 public interface TableRepository extends JpaRepository<RestaurantTable, Long> {
-    // Get all tables that are booked and match customer party size for Recommendation service (with help from Gemini AI)
+    // Get all tables that are booked and match customer party size for
+    // Recommendation service (with help from Gemini AI)
     @Query("""
         SELECT rt
-        FROM RestaurantTable rt
-        LEFT JOIN Reservation r
-            ON r.restaurantTable = rt
-            AND r.date = :date
-            AND r.time BETWEEN :startTime AND :endTime
-        WHERE rt.capacity >= :capacity
-        AND r.id IS NULL
-        ORDER BY rt.capacity ASC
+            FROM RestaurantTable rt
+            WHERE rt.capacity >= :capacity
+            AND rt.id NOT IN (
+                SELECT r.restaurantTable.id
+                FROM Reservation r
+                WHERE r.date = :date
+                AND r.time BETWEEN :startTime AND :endTime
+            )
+            ORDER BY rt.capacity ASC
         """)
-    List<RestaurantTable> findByCapacityGreaterThanEqual(int capacity, LocalDate date, LocalTime startTime, LocalTime endTime);
+    List<RestaurantTable> findAvailableTablesByCapacityAndReservation_DateAndReservation_TimeBetween(int capacity, LocalDate date, LocalTime startTime,
+                                                                                                     LocalTime endTime);
 }
