@@ -106,8 +106,8 @@ function AdminFloorEditor() {
 
   // Handle the table dragged to delete zone and its deletion
   const onDropDelete = async (e: React.DragEvent<HTMLDivElement>) => {
+    setError(null);
     if (!e.dataTransfer) return;
-
     const { id, isNew } = JSON.parse(e.dataTransfer.getData("table"));
 
     if (!id) return;
