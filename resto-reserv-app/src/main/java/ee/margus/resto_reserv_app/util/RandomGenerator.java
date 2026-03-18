@@ -7,6 +7,7 @@ import ee.margus.resto_reserv_app.model.TableAttribute;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 // Populates reservations and tables with random data for demo
 public class RandomGenerator {
@@ -16,7 +17,7 @@ public class RandomGenerator {
 
         List<Reservation> reservations = new ArrayList<>();
 
-        for (int i = 0; i < 31; i++) {
+        while (reservations.size() < 32){
 
             Reservation r = new Reservation();
 
@@ -33,7 +34,14 @@ public class RandomGenerator {
 
             r.setPartySize(1 + random.nextInt(restaurantTable.getCapacity()));
 
-            reservations.add(r);
+            var check =  reservations.stream()
+                .filter(res -> res.getDate() == date &&
+                    res.getTime().isAfter(time.minusHours(2)) &&
+                    res.getTime().isBefore(time.plusHours(2)) &&
+                    Objects.equals(res.getRestaurantTable().getId(), restaurantTable.getId()))
+                .collect(Collectors.toSet());
+
+            if(check.isEmpty()) reservations.add(r);
         }
 
         return reservations;
