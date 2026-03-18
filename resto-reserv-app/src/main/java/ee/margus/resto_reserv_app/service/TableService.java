@@ -107,7 +107,7 @@ public class TableService {
 
         // Check if a table has id from request and it exists in database mapping
         if (tableDto.id() != null) {
-            rt = Optional.of(dbTables.get(tableDto.id()))
+            rt = Optional.ofNullable(dbTables.get(tableDto.id()))
                     .orElseThrow(() -> new RuntimeException("Table doesn't exist"));
         } else {
             rt = new RestaurantTable();
