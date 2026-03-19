@@ -93,6 +93,8 @@ Writing tests took alot of time, in total ~12hr, mainly because of making refact
 
 Alot of time was spent making frontend components and pages, checking if they work, error handlings for forms and backend. The frontend visual UI and components layouts are made with help from AI.
 
+Because each table is booked for 2 hours by default, checking available tables and times was done by adding 2 hours in code but that got too complecated in the end and bugs started to show. In the end it was fixed by setting an end time in the reservation and making database querying easier.
+
 In total the development for this version of the task took ~1 week.
 
 #### TODO:
