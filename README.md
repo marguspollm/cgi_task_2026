@@ -63,7 +63,7 @@ npm run dev
 - **Easy Reservation Booking**: Book a table with date, time, party size, and preferences
 - **Table Selection**: Choose tables based on available attributes
 - **Real-time Availability**: Check table availability before confirming reservation
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Responsive Design**: Works on desktop and mobile devices
 
 ### Admin Features
 
@@ -76,7 +76,6 @@ npm run dev
 
 - Each reservation books a table for 2 hours
 - The restaurant is open 24/7
-- For this demo a simple CORS policy is used
 
 ### Notes
 
@@ -86,7 +85,7 @@ Set up Docker with docker-compose, better would be two separate Docker environme
 
 At first created a simple backend application with Maps as a way of persisting data, but later decided to change it to H2 database. That took bit longer beacuse of rewriting tests and had bit of help from AI to write database queries in repository(noted in code).
 
-Implemented MealDB API call for getting random meals to show user after creating a reservation. The frontend Carousel components visual layout was helped with AI.
+Implemented MealDB API call for getting random meals to show user after creating a reservation. Right now the pre-order button displays a notification that the meal was ordered but it is not saved to database. The frontend Carousel components visual layout was helped with AI.
 
 Creating drag and drop for tables took a lot of time ~12hr and was a mix of StackOverflow/Reddit/MDN docs reasearch and trying. The final visual placement was helped with AI.
 
@@ -100,4 +99,4 @@ In total the development for this version of the task took ~1 week.
 
 - Some tests might still be missing, especially the edge cases
 - There are no frontend tests(there is Playwright framework for E2E or Jest)
-- Right now times are generated from 00:00-23:00 on frontend - better option, admin sets open times per day and based on user selection of the day - the times are shown
+- Right now times are generated from 00:00-23:00 on frontend - an option would be that admin sets open times per day and based on user selection of the day - the times are shown to user
