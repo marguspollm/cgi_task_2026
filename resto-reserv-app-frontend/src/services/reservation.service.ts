@@ -44,7 +44,6 @@ export const getReservations = (filters: ReservationFilters) => {
   const params = new URLSearchParams();
   params.append("page", filters.page.toString());
   params.append("size", filters.size.toString());
-  params.append("sort", "date,time,asc");
 
   // Add optional filters if provided
   if (filters.customerName) params.append("customerName", filters.customerName);

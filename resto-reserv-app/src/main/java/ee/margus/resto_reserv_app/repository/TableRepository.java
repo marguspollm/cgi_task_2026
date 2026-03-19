@@ -21,10 +21,10 @@ public interface TableRepository extends JpaRepository<RestaurantTable, Long> {
                 SELECT r.restaurantTable.id
                 FROM Reservation r
                 WHERE r.date = :date
-                AND r.time BETWEEN :startTime AND :endTime
+                AND r.startTime < :endTime
+                AND r.endTime > :startTime
             )
             ORDER BY rt.capacity ASC
         """)
-    List<RestaurantTable> findAvailableTablesByCapacityAndReservation_DateAndReservation_TimeBetween(int capacity, LocalDate date, LocalTime startTime,
-                                                                                                     LocalTime endTime);
+    List<RestaurantTable> findAvailableTables(int capacity, LocalDate date, LocalTime startTime, LocalTime endTime);
 }

@@ -27,18 +27,19 @@ public class RandomGenerator {
             LocalTime time = LocalTime.of(hour, 0);
 
             r.setDate(date);
-            r.setTime(time);
+            r.setStartTime(time);
+            r.setEndTime(time.plusHours(2));
 
             RestaurantTable restaurantTable = restaurantTables.get(random.nextInt(restaurantTables.size()));
             r.setRestaurantTable(restaurantTable);
 
             r.setPartySize(1 + random.nextInt(restaurantTable.getCapacity()));
 
-            var check =  reservations.stream()
-                .filter(res -> res.getDate() == date &&
-                    res.getTime().isAfter(time.minusHours(2)) &&
-                    res.getTime().isBefore(time.plusHours(2)) &&
-                    Objects.equals(res.getRestaurantTable().getId(), restaurantTable.getId()))
+            Set<Reservation> check =  reservations.stream()
+                .filter(res -> res.getDate().equals(date))
+                .filter(res -> res.getStartTime().isBefore(time.plusHours(2)))
+                .filter(res -> res.getEndTime().isAfter(time))
+                .filter(res -> Objects.equals(res.getRestaurantTable().getId(), restaurantTable.getId()))
                 .collect(Collectors.toSet());
 
             if(check.isEmpty()) reservations.add(r);

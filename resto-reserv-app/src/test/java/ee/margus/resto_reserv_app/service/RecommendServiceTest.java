@@ -36,7 +36,7 @@ class RecommendServiceTest {
         RecommendationRequest request =
             new RecommendationRequest(2, DATE, TIME, null);
 
-        when(tableRepository.findAvailableTablesByCapacityAndReservation_DateAndReservation_TimeBetween(anyInt(), any(), any(), any()))
+        when(tableRepository.findAvailableTables(anyInt(), any(), any(), any()))
             .thenReturn(List.of());
 
         Exception ex = assertThrows(RuntimeException.class, () -> recommendService.getRecommendedTable(request));
@@ -49,7 +49,7 @@ class RecommendServiceTest {
         RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
         RestaurantTable restaurantTable2 = new RestaurantTable(2L, 2, Set.of(WINDOW), 20, 10);
 
-        when(tableRepository.findAvailableTablesByCapacityAndReservation_DateAndReservation_TimeBetween(anyInt(), any(), any(), any()))
+        when(tableRepository.findAvailableTables(anyInt(), any(), any(), any()))
             .thenReturn(List.of(restaurantTable1, restaurantTable2));
 
         assertEquals(1L, recommendService.getRecommendedTable(request));
@@ -61,7 +61,7 @@ class RecommendServiceTest {
         RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
         RestaurantTable restaurantTable2 = new RestaurantTable(2L, 2, Set.of(WINDOW), 20, 10);
 
-        when(tableRepository.findAvailableTablesByCapacityAndReservation_DateAndReservation_TimeBetween(anyInt(), any(), any(), any()))
+        when(tableRepository.findAvailableTables(anyInt(), any(), any(), any()))
             .thenReturn(List.of(restaurantTable1, restaurantTable2));
 
         assertEquals(2L, recommendService.getRecommendedTable(request));
@@ -73,7 +73,7 @@ class RecommendServiceTest {
         RestaurantTable restaurantTable1 = new RestaurantTable(1L, 2, Set.of(), 10, 10);
         RestaurantTable restaurantTable2 = new RestaurantTable(2L, 6, Set.of(WINDOW), 20, 10);
 
-        when(tableRepository.findAvailableTablesByCapacityAndReservation_DateAndReservation_TimeBetween(anyInt(), any(), any(), any()))
+        when(tableRepository.findAvailableTables(anyInt(), any(), any(), any()))
             .thenReturn(List.of(restaurantTable1, restaurantTable2));
 
         assertEquals(2L, recommendService.getRecommendedTable(request));
@@ -84,7 +84,7 @@ class RecommendServiceTest {
         RecommendationRequest request = new RecommendationRequest(4, DATE, TIME, Set.of());
         RestaurantTable restaurantTable = new RestaurantTable(1L, 4, Set.of(), 10, 10);
 
-        when(tableRepository.findAvailableTablesByCapacityAndReservation_DateAndReservation_TimeBetween(anyInt(), any(), any(), any()))
+        when(tableRepository.findAvailableTables(anyInt(), any(), any(), any()))
             .thenReturn(List.of(restaurantTable));
 
         assertEquals(1L, recommendService.getRecommendedTable(request));

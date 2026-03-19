@@ -20,7 +20,8 @@ public class Reservation {
     private Long id;
 
     private LocalDate date;
-    private LocalTime time;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_table_id")
@@ -36,7 +37,7 @@ public class Reservation {
         return "Reservation{" +
             "id=" + id +
             ", date=" + date +
-            ", time=" + time +
+            ", time=" + startTime +
             ", restaurantTableId=" + (restaurantTable != null ? restaurantTable.getId() : null) +
             ", partySize=" + partySize +
             ", customerId=" + (customer != null ? customer.getId() : null) +

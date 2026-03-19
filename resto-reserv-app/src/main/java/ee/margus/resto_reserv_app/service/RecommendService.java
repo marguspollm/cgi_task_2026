@@ -34,10 +34,10 @@ public class RecommendService {
         // Get all tables that are equal or greater than party size and map to
         // RecommendedTableScore
         List<RecommendedTableScore> availableTableScore = tableRepository
-                .findAvailableTablesByCapacityAndReservation_DateAndReservation_TimeBetween(
+                .findAvailableTables(
                         request.partySize(),
                         request.date(),
-                        request.time().minusHours(2),
+                        request.time(),
                         request.time().plusHours(2))
                 .stream()
                 .map(table -> new RecommendedTableScore(table, 0))
