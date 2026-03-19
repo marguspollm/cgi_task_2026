@@ -3,6 +3,7 @@ package ee.margus.resto_reserv_app.service;
 import ee.margus.resto_reserv_app.dto.MealDto;
 import ee.margus.resto_reserv_app.model.MealDbMealData;
 import ee.margus.resto_reserv_app.model.MealDbResponse;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,13 +18,15 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MealServiceTest {
-    private final String testUrl = "test.com";
+    private final String testUrl = "external.mealdb.url";
+    private final Random random = new Random();
     @Mock
     private RestTemplate restTemplate;
     @InjectMocks
@@ -36,19 +39,13 @@ class MealServiceTest {
 
     @Test
     void getRecommendedMeals_shouldReturnFourMeals() {
-        MealDbMealData meal = new MealDbMealData();
-        meal.setIdMeal("123");
-        meal.setStrMeal("Test Meal");
-
-        MealDbResponse mockResponse = new MealDbResponse();
-        mockResponse.setMeals(List.of(meal));
 
         when(restTemplate.exchange(
             testUrl,
             HttpMethod.GET,
             null,
             MealDbResponse.class))
-            .thenReturn(new ResponseEntity<>(mockResponse, HttpStatus.OK));
+            .thenAnswer(_ -> new ResponseEntity<>(getMockResponse(), HttpStatus.OK));
 
         List<MealDto> result = mealService.getRecommendedMeals();
 
@@ -83,4 +80,14 @@ class MealServiceTest {
         assertThrows(RestClientException.class, () -> mealService.getRecommendedMeals());
     }
 
+
+    private @NonNull MealDbResponse getMockResponse() {
+        MealDbMealData meal = new MealDbMealData();
+        meal.setIdMeal(String.valueOf(random.nextInt(100)));
+        meal.setStrMeal("Test Meal");
+
+        MealDbResponse mockResponse = new MealDbResponse();
+        mockResponse.setMeals(List.of(meal));
+        return mockResponse;
+    }
 }
