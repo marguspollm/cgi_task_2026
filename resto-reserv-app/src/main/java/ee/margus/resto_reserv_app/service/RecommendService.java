@@ -31,7 +31,7 @@ public class RecommendService {
     public Long getRecommendedTable(RecommendationRequest request) {
         validateRequest(request);
 
-        // Get all tables that are equal or greater then party size and map to
+        // Get all tables that are equal or greater than party size and map to
         // RecommendedTableScore
         List<RecommendedTableScore> availableTableScore = tableRepository
                 .findAvailableTablesByCapacityAndReservation_DateAndReservation_TimeBetween(
