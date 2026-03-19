@@ -74,7 +74,7 @@ npm run dev
 
 ### **Prequsites made:**
 
-- Each reservation books a table for 2 hours
+- Each reservation reserves a table for 2 hours
 - The restaurant is open 24/7
 
 ### Notes
