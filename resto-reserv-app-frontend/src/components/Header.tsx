@@ -28,7 +28,7 @@ function Header() {
         <ListItemButton component={Link} to="/">
           <ListItemText primary="Reservation" />
         </ListItemButton>
-        <ListItemButton component={Link} to="/admin">
+        <ListItemButton component={Link} to="/admin/reservations">
           <ListItemText primary="Admin view" />
         </ListItemButton>
       </List>
@@ -49,7 +49,7 @@ function Header() {
           <Button component={Link} to="/" color="inherit">
             Make a Reservation
           </Button>
-          <Button component={Link} to="/admin" color="inherit">
+          <Button component={Link} to="/admin/reservations" color="inherit">
             Admin view
           </Button>
         </Box>

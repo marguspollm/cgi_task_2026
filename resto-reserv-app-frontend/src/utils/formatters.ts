@@ -16,7 +16,8 @@ export const createDate = (dateStr: string, timeStr: string) =>
  * @param dateTime The Date object to format
  * @returns Formatted string like "Sunday, December 31, 1999"
  */
-export const formatDate = (dateTime: Date) => {
+export const formatDate = (dateTime: Date | null): string => {
+  if (!dateTime) return "";
   return dateTime.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -31,7 +32,8 @@ export const formatDate = (dateTime: Date) => {
  * @param dateTime Date object to format
  * @returns Formatted time string like "12:00"
  */
-export const formatTime = (dateTime: Date) => {
+export const formatTime = (dateTime: Date | null): string => {
+  if (!dateTime) return "";
   return dateTime.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",

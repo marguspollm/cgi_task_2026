@@ -54,6 +54,10 @@ function ReservationConfirmationCard({
     setSnackbarOpen(true);
   };
 
+  const createdDate = confirmedReservation
+    ? createDate(confirmedReservation.date, confirmedReservation.time)
+    : null;
+
   return (
     <>
       <Dialog
@@ -89,21 +93,11 @@ function ReservationConfirmationCard({
               </Typography>
               <Typography>
                 <strong>Date: </strong>
-                {formatDate(
-                  createDate(
-                    confirmedReservation.date,
-                    confirmedReservation.time,
-                  ),
-                )}
+                {formatDate(createdDate)}
               </Typography>
               <Typography>
                 <strong>Time: </strong>
-                {formatTime(
-                  createDate(
-                    confirmedReservation.date,
-                    confirmedReservation.time,
-                  ),
-                )}
+                {formatTime(createdDate)}
               </Typography>
               <Typography>
                 <strong>Party Size: </strong> {confirmedReservation.partySize}

@@ -21,6 +21,7 @@ import { getReservations } from "../../services/reservation.service";
 import { handleError } from "../../utils/errors";
 import type { Pageable } from "../../models/Pageable";
 import TimeSelect from "../../components/TimeSelect";
+import { createDate, formatDate, formatTime } from "../../utils/formatters";
 
 /**
  * Admin page for Reservations
@@ -113,6 +114,17 @@ function AdminReservationsPage() {
         <Grid container spacing={2} alignItems="left">
           <Grid size={{ xs: 12, sm: "auto" }}>
             <TextField
+              label="Name"
+              type="customerName"
+              value={nameInput}
+              onChange={e => handleInputChange("customerName", e.target.value)}
+              slotProps={{
+                inputLabel: { shrink: true },
+              }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: "auto" }}>
+            <TextField
               label="Date"
               type="date"
               value={filters.date}
@@ -128,17 +140,6 @@ function AdminReservationsPage() {
               onChange={handleInputChange}
               fullWidth={true}
               mode={"admin"}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <TextField
-              label="Name"
-              type="customerName"
-              value={nameInput}
-              onChange={e => handleInputChange("customerName", e.target.value)}
-              slotProps={{
-                inputLabel: { shrink: true },
-              }}
             />
           </Grid>
         </Grid>
@@ -169,16 +170,19 @@ function AdminReservationsPage() {
                   </TableCell>
                 </TableRow>
               )}
-              {response?.content.map((r: ReservationResponse) => (
-                <TableRow key={r.id}>
-                  <TableCell>{r.customerName}</TableCell>
-                  <TableCell>{r.phoneNumber}</TableCell>
-                  <TableCell>{r.tableId}</TableCell>
-                  <TableCell>{r.date}</TableCell>
-                  <TableCell>{r.time}</TableCell>
-                  <TableCell>{r.partySize}</TableCell>
-                </TableRow>
-              ))}
+              {response?.content.map((r: ReservationResponse) => {
+                const createdDate = createDate(r.date, r.time);
+                return (
+                  <TableRow key={r.id}>
+                    <TableCell>{r.customerName}</TableCell>
+                    <TableCell>{r.phoneNumber}</TableCell>
+                    <TableCell>{r.tableId}</TableCell>
+                    <TableCell>{formatDate(createdDate)}</TableCell>
+                    <TableCell>{formatTime(createdDate)}</TableCell>
+                    <TableCell>{r.partySize}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
           <TablePagination
