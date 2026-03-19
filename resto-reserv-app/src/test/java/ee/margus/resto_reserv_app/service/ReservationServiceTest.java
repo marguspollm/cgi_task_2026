@@ -45,7 +45,8 @@ class ReservationServiceTest {
         exisitngReservation.setRestaurantTable(restaurantTable);
         exisitngReservation.setCustomer(new Customer("Test Tester", "5555555"));
         exisitngReservation.setDate(date);
-        exisitngReservation.setTime(time);
+        exisitngReservation.setStartTime(time);
+        exisitngReservation.setEndTime(time.plusHours(2));
         exisitngReservation.setPartySize(partySize);
         return exisitngReservation;
     }
@@ -93,13 +94,13 @@ class ReservationServiceTest {
         Reservation exisitngReservation = getReservation(restaurantTable, DATE, TIME, request.partySize());
 
         when(reservationRepository
-            .findByDateAndTimeBetweenAndRestaurantTable_Id(any(), any(), any(), any()))
+            .findByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(any(), any(), any(), any()))
             .thenReturn(List.of(exisitngReservation));
 
         Exception ex = assertThrows(RuntimeException.class, () -> service.create(request));
         assertEquals("Table is already booked for this time", ex.getMessage());
         verify(reservationRepository)
-            .findByDateAndTimeBetweenAndRestaurantTable_Id(DATE, TIME.minusHours(2), TIME.plusHours(2), 1L);
+            .findByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(DATE, 1L, TIME.plusHours(2), TIME);
     }
 
     @Test
@@ -108,11 +109,11 @@ class ReservationServiceTest {
         RestaurantTable restaurantTable = getTable(1L);
         Reservation reservation = getReservation(restaurantTable, LocalDate.now(), timeNow, 2);
 
-        when(reservationRepository.findByDateAndTimeBetween(any(), any(), any()))
+        when(reservationRepository.findByDateAndStartTimeLessThanAndEndTimeGreaterThan(any(), any(), any()))
             .thenReturn(List.of(reservation));
 
         assertEquals(List.of(1L), service.getReservedTables(LocalDate.now(), timeNow));
-        verify(reservationRepository).findByDateAndTimeBetween(LocalDate.now(), timeNow.minusHours(2), timeNow.plusHours(2));
+        verify(reservationRepository).findByDateAndStartTimeLessThanAndEndTimeGreaterThan(LocalDate.now(), timeNow.plusHours(2), timeNow);
     }
 
     @Test
@@ -123,10 +124,10 @@ class ReservationServiceTest {
         Reservation reservation2 = getReservation(restaurantTable2, DATE, TIME, 2);
 
 
-        when(reservationRepository.findByDateAndTimeBetween(any(), any(), any()))
+        when(reservationRepository.findByDateAndStartTimeLessThanAndEndTimeGreaterThan(any(), any(), any()))
             .thenReturn(List.of(reservation1, reservation2));
 
         assertEquals(List.of(2L, 3L), service.getReservedTables(DATE, TIME));
-        verify(reservationRepository).findByDateAndTimeBetween(DATE, TIME.minusHours(2), TIME.plusHours(2));
+        verify(reservationRepository).findByDateAndStartTimeLessThanAndEndTimeGreaterThan(DATE, TIME.plusHours(2), TIME);
     }
 }
