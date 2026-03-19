@@ -94,13 +94,13 @@ class ReservationServiceTest {
         Reservation exisitngReservation = getReservation(restaurantTable, DATE, TIME, request.partySize());
 
         when(reservationRepository
-            .findByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(any(), any(), any(), any()))
-            .thenReturn(List.of(exisitngReservation));
+            .existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(any(), any(), any(), any()))
+            .thenReturn(true);
 
         Exception ex = assertThrows(RuntimeException.class, () -> service.create(request));
         assertEquals("Table is already booked for this time", ex.getMessage());
         verify(reservationRepository)
-            .findByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(DATE, 1L, TIME.plusHours(2), TIME);
+            .existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(DATE, 1L, TIME.plusHours(2), TIME);
     }
 
     @Test

@@ -24,15 +24,18 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         """)
     Page<Reservation> findWithOptionalFilters(LocalDate date, LocalTime time, String name, Pageable pageable);
 
+    // Checks if given  table has reservations
     boolean existsByRestaurantTable_IdAndDateGreaterThanEqual(Long id, LocalDate date);
 
-    List<Reservation> findByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(
+    // Checks if table is already booked for given date and time period
+    boolean existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(
         LocalDate date,
         Long tableId,
         LocalTime endTime,
         LocalTime startTime
     );
 
+    // Finds all reservation for given date and for time period
     List<Reservation> findByDateAndStartTimeLessThanAndEndTimeGreaterThan(
         LocalDate date,
         LocalTime endTime,

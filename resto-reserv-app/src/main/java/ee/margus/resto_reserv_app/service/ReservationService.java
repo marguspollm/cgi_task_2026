@@ -107,15 +107,15 @@ public class ReservationService {
                                    LocalTime time,
                                    Long tableId) {
         // Check table for conflicts within 2-hour buffer
-        List<Reservation> conflicts = reservationRepository
-            .findByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(
+        boolean hasConflicts = reservationRepository
+            .existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(
                 date,
                 tableId,
                 time.plusHours(2),
                 time
             );
 
-        if (!conflicts.isEmpty())
+        if (hasConflicts)
             throw new RuntimeException("Table is already booked for this time");
     }
 
