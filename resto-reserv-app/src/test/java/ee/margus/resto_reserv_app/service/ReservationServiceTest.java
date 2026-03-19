@@ -39,7 +39,8 @@ class ReservationServiceTest {
     @InjectMocks
     private ReservationService service;
 
-    private static @NonNull Reservation getReservation(RestaurantTable restaurantTable, LocalDate date, LocalTime time, int partySize) {
+    private static @NonNull Reservation getReservation(RestaurantTable restaurantTable, LocalDate date, LocalTime time,
+            int partySize) {
         Reservation exisitngReservation = new Reservation();
         exisitngReservation.setId(1L);
         exisitngReservation.setRestaurantTable(restaurantTable);
@@ -57,12 +58,12 @@ class ReservationServiceTest {
 
     private static @NonNull ReservationRequest getRequest() {
         return new ReservationRequest(
-            "Test Tester",
-            "5555555",
-            1L,
-            ReservationServiceTest.DATE,
-            ReservationServiceTest.TIME,
-            2);
+                "Test Tester",
+                "5555555",
+                1L,
+                ReservationServiceTest.DATE,
+                ReservationServiceTest.TIME,
+                2);
     }
 
     @Test
@@ -89,18 +90,15 @@ class ReservationServiceTest {
     void givenOverlappingReservationRequest_whenCreateReservation_thenThrowException() {
         ReservationRequest request = getRequest();
 
-        RestaurantTable restaurantTable = getTable(1L);
-
-        Reservation exisitngReservation = getReservation(restaurantTable, DATE, TIME, request.partySize());
-
         when(reservationRepository
-            .existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(any(), any(), any(), any()))
-            .thenReturn(true);
+                .existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(any(), any(), any(), any()))
+                .thenReturn(true);
 
         Exception ex = assertThrows(RuntimeException.class, () -> service.create(request));
         assertEquals("Table is already booked for this time", ex.getMessage());
         verify(reservationRepository)
-            .existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(DATE, 1L, TIME.plusHours(2), TIME);
+                .existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(DATE, 1L, TIME.plusHours(2),
+                        TIME);
     }
 
     @Test
@@ -110,10 +108,11 @@ class ReservationServiceTest {
         Reservation reservation = getReservation(restaurantTable, LocalDate.now(), timeNow, 2);
 
         when(reservationRepository.findByDateAndStartTimeLessThanAndEndTimeGreaterThan(any(), any(), any()))
-            .thenReturn(List.of(reservation));
+                .thenReturn(List.of(reservation));
 
         assertEquals(List.of(1L), service.getReservedTables(LocalDate.now(), timeNow));
-        verify(reservationRepository).findByDateAndStartTimeLessThanAndEndTimeGreaterThan(LocalDate.now(), timeNow.plusHours(2), timeNow);
+        verify(reservationRepository).findByDateAndStartTimeLessThanAndEndTimeGreaterThan(LocalDate.now(),
+                timeNow.plusHours(2), timeNow);
     }
 
     @Test
@@ -123,11 +122,11 @@ class ReservationServiceTest {
         Reservation reservation1 = getReservation(restaurantTable1, DATE, TIME, 2);
         Reservation reservation2 = getReservation(restaurantTable2, DATE, TIME, 2);
 
-
         when(reservationRepository.findByDateAndStartTimeLessThanAndEndTimeGreaterThan(any(), any(), any()))
-            .thenReturn(List.of(reservation1, reservation2));
+                .thenReturn(List.of(reservation1, reservation2));
 
         assertEquals(List.of(2L, 3L), service.getReservedTables(DATE, TIME));
-        verify(reservationRepository).findByDateAndStartTimeLessThanAndEndTimeGreaterThan(DATE, TIME.plusHours(2), TIME);
+        verify(reservationRepository).findByDateAndStartTimeLessThanAndEndTimeGreaterThan(DATE, TIME.plusHours(2),
+                TIME);
     }
 }

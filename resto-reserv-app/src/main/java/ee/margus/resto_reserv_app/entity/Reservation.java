@@ -35,12 +35,12 @@ public class Reservation {
     @Override
     public String toString() {
         return "Reservation{" +
-            "id=" + id +
-            ", date=" + date +
-            ", time=" + startTime +
-            ", restaurantTableId=" + (restaurantTable != null ? restaurantTable.getId() : null) +
-            ", partySize=" + partySize +
-            ", customerId=" + (customer != null ? customer.getId() : null) +
-            '}';
+                "id=" + id +
+                ", date=" + date +
+                ", time=" + startTime +
+                ", restaurantTableId=" + (restaurantTable != null ? restaurantTable.getId() : null) +
+                ", partySize=" + partySize +
+                ", customerId=" + (customer != null ? customer.getId() : null) +
+                '}';
     }
 }

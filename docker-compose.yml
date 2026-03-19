@@ -2,12 +2,16 @@ services:
   backend:
     container_name: backend
     build: ./resto-reserv-app
+    environment:
+      - TZ=Europe/Tallinn
     ports:
       - "8080:8080"
 
   frontend:
     container_name: frontend
     build: ./resto-reserv-app-frontend
+    environment:
+      - TZ=Europe/Tallinn
     depends_on:
       - backend
     ports:

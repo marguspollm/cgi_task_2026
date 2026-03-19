@@ -95,6 +95,8 @@ Alot of time was spent making frontend components and pages, checking if they wo
 
 Because each table is booked for 2 hours by default, checking available tables and times was done by adding 2 hours in code but that got too complecated in the end and bugs started to show. In the end it was fixed by setting an end time in the reservation and making database querying easier.
 
+Ran into problem where docker container date and time were differnet from host time and date. After some googling added an environment variable to docker compose to fix that. Think better would be adding UTC time to backend Reservation entity and then using that as the main timestmp value for sorting, checking and fitlering.
+
 In total the development for this version of the task took ~1 week.
 
 #### TODO:

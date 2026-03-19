@@ -67,13 +67,13 @@ public class ReservationService {
      * @param date Reservation date
      * @param time Reservation time
      * @return List of table IDs that are currently booked for the given date and
-     * time
+     *         time
      */
     public List<Long> getReservedTables(LocalDate date, LocalTime time) {
         return reservationRepository.findByDateAndStartTimeLessThanAndEndTimeGreaterThan(date, time.plusHours(2), time)
-            .stream()
-            .map(res -> res.getRestaurantTable().getId())
-            .toList();
+                .stream()
+                .map(res -> res.getRestaurantTable().getId())
+                .toList();
     }
 
     /**
@@ -87,7 +87,7 @@ public class ReservationService {
      */
     public Page<ReservationResponse> getFilteredReservations(ReservationFilters filters, Pageable pageable) {
         Page<Reservation> reservations = reservationRepository
-            .findWithOptionalFilters(filters.date(), filters.time(), filters.customerName(), pageable);
+                .findWithOptionalFilters(filters.date(), filters.time(), filters.customerName(), pageable);
 
         return reservations.map(this::createReservationResponse);
     }
@@ -104,16 +104,15 @@ public class ReservationService {
      *                          window
      */
     private void checkAvailability(LocalDate date,
-                                   LocalTime time,
-                                   Long tableId) {
+            LocalTime time,
+            Long tableId) {
         // Check table for conflicts within 2-hour buffer
         boolean hasConflicts = reservationRepository
-            .existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(
-                date,
-                tableId,
-                time.plusHours(2),
-                time
-            );
+                .existsByDateAndRestaurantTable_IdAndStartTimeLessThanAndEndTimeGreaterThan(
+                        date,
+                        tableId,
+                        time.plusHours(2),
+                        time);
 
         if (hasConflicts)
             throw new RuntimeException("Table is already booked for this time");
@@ -124,7 +123,7 @@ public class ReservationService {
 
         // Check if given table exists in database
         RestaurantTable dbRestaurantTable = tableRepository.findById(reservationRequest.tableId())
-            .orElseThrow(() -> new RuntimeException("Table doesn't exist!"));
+                .orElseThrow(() -> new RuntimeException("Table doesn't exist!"));
         reservation.setRestaurantTable(dbRestaurantTable);
 
         reservation.setDate(reservationRequest.date());
@@ -142,12 +141,12 @@ public class ReservationService {
 
     private @NonNull ReservationResponse createReservationResponse(Reservation reservation) {
         return new ReservationResponse(
-            reservation.getId(),
-            reservation.getCustomer().getName(),
-            reservation.getCustomer().getPhoneNumber(),
-            reservation.getRestaurantTable().getId(),
-            reservation.getDate(),
-            reservation.getStartTime(),
-            reservation.getPartySize());
+                reservation.getId(),
+                reservation.getCustomer().getName(),
+                reservation.getCustomer().getPhoneNumber(),
+                reservation.getRestaurantTable().getId(),
+                reservation.getDate(),
+                reservation.getStartTime(),
+                reservation.getPartySize());
     }
 }
