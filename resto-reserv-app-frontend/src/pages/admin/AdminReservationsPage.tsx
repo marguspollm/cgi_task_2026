@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   CircularProgress,
+  Divider,
   Grid,
   Paper,
   Table,
@@ -105,6 +106,10 @@ function AdminReservationsPage() {
           mb: 3,
         }}
       >
+        <Typography variant="h4" gutterBottom>
+          Reservations Table
+        </Typography>
+        <Divider sx={{ mt: 1, mb: 4 }} />
         <Grid container spacing={2} alignItems="left">
           <Grid size={{ xs: 12, sm: "auto" }}>
             <TextField

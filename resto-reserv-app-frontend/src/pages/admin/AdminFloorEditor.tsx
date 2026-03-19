@@ -13,8 +13,8 @@ import {
   TextField,
   Button,
   Alert,
-  Container,
   Snackbar,
+  Divider,
 } from "@mui/material";
 import { handleError } from "../../utils/errors";
 import Floor from "../../components/Floor";
@@ -208,68 +208,64 @@ function AdminFloorEditor() {
 
   return (
     <>
+      <Typography variant="h4" gutterBottom>
+        Floor tables Editor
+      </Typography>
+      <Divider sx={{ mt: 1, mb: 4 }} />
       {error && (
         <Alert severity="warning" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
+      <Floor
+        mode="edit"
+        tables={tables}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
+        onDropDelete={onDropDelete}
+      />
+      <Button
+        variant="contained"
+        onClick={handleSave}
+        loading={loading}
+        disabled={saveDisabled}
+        fullWidth
+        color="success"
+      >
+        Save
+      </Button>
 
-      <Container sx={{ py: 3 }}>
-        <Stack spacing={3}>
-          <Typography sx={{ fontWeight: 700, textAlign: "center" }}>
-            Table Layout Editor
-          </Typography>
-
-          <Floor
-            mode="edit"
-            tables={tables}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            onDropDelete={onDropDelete}
-          />
-          <Button
-            variant="contained"
-            onClick={handleSave}
-            loading={loading}
-            disabled={saveDisabled}
+      <Paper elevation={3} sx={{ p: 3, maxWidth: 500 }}>
+        <Stack spacing={2}>
+          <TextField
+            label="Capacity"
+            type="number"
+            value={newCapacity}
+            onChange={e => setNewCapacity(Number(e.target.value))}
             fullWidth
-            color="success"
-          >
-            Save
-          </Button>
+            error={!!formErrors?.capacity}
+            helperText={formErrors?.capacity}
+          />
 
-          <Paper elevation={3} sx={{ p: 3, maxWidth: 500 }}>
-            <Stack spacing={2}>
-              <TextField
-                label="Capacity"
-                type="number"
-                value={newCapacity}
-                onChange={e => setNewCapacity(Number(e.target.value))}
-                fullWidth
-                error={!!formErrors?.capacity}
-                helperText={formErrors?.capacity}
-              />
+          <TableAttributesSelect
+            onSelectAttribute={setNewAttributes}
+            label="Add table attributes"
+            values={newAttributes}
+          />
 
-              <TableAttributesSelect
-                onSelectAttribute={setNewAttributes}
-                label="Add table attributes"
-                values={newAttributes}
-              />
-
-              <Stack direction="row" spacing={2}>
-                <Button
-                  variant="contained"
-                  onClick={handleAddTable}
-                  fullWidth
-                  loading={loading}
-                >
-                  Add Table
-                </Button>
-              </Stack>
-            </Stack>
-          </Paper>
+          <Stack direction="row" spacing={2}>
+            <Button
+              variant="contained"
+              onClick={handleAddTable}
+              fullWidth
+              loading={loading}
+            >
+              Add Table
+            </Button>
+          </Stack>
         </Stack>
-      </Container>
+      </Paper>
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}

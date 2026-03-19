@@ -1,12 +1,15 @@
 import {
   Box,
+  Container,
   Drawer,
   List,
   ListItemButton,
   ListItemText,
+  Stack,
   Toolbar,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { Link } from "react-router";
 import { Outlet } from "react-router";
 
@@ -16,6 +19,15 @@ import { Outlet } from "react-router";
  * Admin page with menu links to pages - Floor plan, Reservations table
  */
 function AdminDashboardPage() {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const handleListItemClick = (
+    _: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    index: number,
+  ) => {
+    setSelectedIndex(index);
+  };
+
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <Drawer
@@ -38,11 +50,21 @@ function AdminDashboardPage() {
         </Toolbar>
 
         <List>
-          <ListItemButton component={Link} to="/admin/reservations">
+          <ListItemButton
+            component={Link}
+            to="/admin/reservations"
+            selected={selectedIndex === 1}
+            onClick={event => handleListItemClick(event, 1)}
+          >
             <ListItemText primary="Reservations" />
           </ListItemButton>
 
-          <ListItemButton component={Link} to="/admin/floor">
+          <ListItemButton
+            component={Link}
+            to="/admin/floor"
+            selected={selectedIndex === 2}
+            onClick={event => handleListItemClick(event, 2)}
+          >
             <ListItemText primary="Floor edit" />
           </ListItemButton>
         </List>
@@ -57,7 +79,11 @@ function AdminDashboardPage() {
             ml: "10px",
           }}
         >
-          <Outlet />
+          <Container>
+            <Stack spacing={3}>
+              <Outlet />
+            </Stack>
+          </Container>
         </Box>
       </Box>
     </Box>
